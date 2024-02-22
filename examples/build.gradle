@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation project(':quartz')
+
+    implementation "org.quartz-scheduler:quartz:$quartzVersion"
+    implementation "ch.qos.logback:logback-classic:1.4.14"
+}
+
+tasks.withType(JavaExec).configureEach {
+    classpath = sourceSets.main.runtimeClasspath
+    group = "run"
+}
+
+tasks.register('runExample1', JavaExec) {
+    description = 'Run Example 1'
+    mainClass = 'com.esentri.quartz.example1.CarbonAwareTriggerExample'
+}

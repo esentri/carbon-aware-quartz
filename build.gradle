@@ -1,0 +1,14 @@
+plugins {
+
+}
+
+allprojects {
+    group 'com.esentri.quartz'
+    version "$version"
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+}

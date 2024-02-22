@@ -1,0 +1,26 @@
+plugins {
+    id "java-library"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api "org.quartz-scheduler:quartz:$quartzVersion"
+    api "org.slf4j:slf4j-api:$slf4jVersion"
+
+    testImplementation platform("org.junit:junit-bom:$junitPlatformVersion")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+}
+
+jar {
+    archiveBaseName = "$rootProject.name"
+}
+
+test {
+    useJUnitPlatform()
+}

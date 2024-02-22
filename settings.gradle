@@ -1,0 +1,4 @@
+rootProject.name = 'carbon-aware-quartz'
+include 'examples'
+include 'quartz'
+
