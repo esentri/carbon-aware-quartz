@@ -75,4 +75,39 @@ class TimeShiftedJobVetoPluginTest {
         assertThat(result).isFalse();
     }
 
+    @Test
+    void shouldReturnTrue_forJobVeto_inDryRunMode_IfTriggerStateIs_DeterminedABetterExecutionTime() {
+        sut.setDryrun(true);
+
+        CarbonAwareCronTriggerImpl trigger = new CarbonAwareCronTriggerImpl();
+        trigger.setCarbonAwareTriggerState(CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME);
+
+        boolean result = sut.vetoJobExecution(trigger, null);
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalse_forJobVeto_inDryRunMode_IfTriggerStateIs_isReady() {
+        sut.setDryrun(true);
+
+        CarbonAwareCronTriggerImpl trigger = new CarbonAwareCronTriggerImpl();
+        trigger.setCarbonAwareTriggerState(CarbonAwareExecutionState.READY);
+
+        boolean result = sut.vetoJobExecution(trigger, null);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalse_forJobVeto_inDryRunMode_IfTriggerStateIs_isCarbonDataUnavailable() {
+        sut.setDryrun(true);
+
+        CarbonAwareCronTriggerImpl trigger = new CarbonAwareCronTriggerImpl();
+        trigger.setCarbonAwareTriggerState(CarbonAwareExecutionState.READY);
+
+        boolean result = sut.vetoJobExecution(trigger, null);
+
+        assertThat(result).isTrue();
+    }
 }

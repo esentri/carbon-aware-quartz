@@ -19,6 +19,13 @@ public class TimeShiftedJobVetoPlugin extends TriggerListenerSupport implements 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeShiftedJobVetoPlugin.class);
 
+    public void setDryrun(boolean dryrun) {
+        this.dryrun = dryrun;
+    }
+
+    private boolean dryrun;
+
+
     @Override
     public String getName() {
         return getClass().getName();
@@ -50,6 +57,12 @@ public class TimeShiftedJobVetoPlugin extends TriggerListenerSupport implements 
      * */
     @Override
     public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
+        if (dryrun && trigger instanceof CarbonAwareCronTrigger carbonAwareTrigger) {
+            boolean isVeto = Objects.requireNonNull(carbonAwareTrigger).getTriggerState() == CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME;
+            LOGGER.info("----- DRYRUN: Job veto: {} -----", !isVeto);
+            return !isVeto;
+        }
+
         if (trigger instanceof CarbonAwareCronTrigger carbonAwareTrigger) {
             boolean isVeto = Objects.requireNonNull(carbonAwareTrigger).getTriggerState() == CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME;
             LOGGER.info("----- Job veto: {} -----", isVeto);
