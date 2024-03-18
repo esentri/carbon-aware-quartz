@@ -1,6 +1,6 @@
 package com.esentri.quartz.carbonaware.plugins;
 
-import com.esentri.quartz.carbonaware.clients.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;

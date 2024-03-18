@@ -17,7 +17,7 @@
 
 package com.esentri.quartz.carbonaware.triggers;
 
-import com.esentri.quartz.carbonaware.clients.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
 import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;

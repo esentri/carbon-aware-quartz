@@ -1,6 +1,6 @@
 package com.esentri.quartz.carbonaware.triggers.impl;
 
-import com.esentri.quartz.carbonaware.clients.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
