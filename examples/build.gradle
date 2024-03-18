@@ -18,3 +18,10 @@ tasks.register('runExample1', JavaExec) {
     description = 'Run Example 1'
     mainClass = 'com.esentri.quartz.example1.CarbonAwareTriggerExample'
 }
+
+tasks.register('runExample2', JavaExec) {
+    description = 'Run Example 2 - dry-run feature'
+    mainClass = 'com.esentri.quartz.example2.CarbonAwareTriggerDryRunExample'
+    systemProperty('org.quartz.properties', 'com/esentri/quartz/example2/quartz.properties')
+}
+
