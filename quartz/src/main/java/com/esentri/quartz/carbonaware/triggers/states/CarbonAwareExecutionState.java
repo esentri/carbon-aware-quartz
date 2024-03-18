@@ -7,7 +7,5 @@ public enum CarbonAwareExecutionState {
 
     DETERMINED_BETTER_EXECUTION_TIME,
 
-    EXECUTED,
-
     CARBON_DATA_UNAVAILABLE
 }
