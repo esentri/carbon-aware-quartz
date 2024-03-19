@@ -2,11 +2,16 @@ plugins {
     id 'java'
 }
 
+
 dependencies {
     implementation project(':quartz')
 
     implementation "org.quartz-scheduler:quartz:$quartzVersion"
     implementation "ch.qos.logback:logback-classic:1.4.14"
+    implementation platform("org.apache.camel:camel-bom:4.0.0")
+    implementation "org.apache.camel:camel-main"
+    implementation "org.apache.camel:camel-endpointdsl"
+    implementation "org.apache.camel:camel-quartz"
 }
 
 tasks.withType(JavaExec).configureEach {
@@ -19,9 +24,14 @@ tasks.register('runExample1', JavaExec) {
     mainClass = 'com.esentri.quartz.example1.CarbonAwareTriggerExample'
 }
 
+tasks.register('runCamelExample', JavaExec) {
+    description = 'Run Camel Example'
+    mainClass = 'com.esentri.quartz.camelExample.CamelExample'
+    systemProperty('org.quartz.properties', 'com/esentri/quartz/camelExample/quartz.properties')
+}
+
 tasks.register('runExample2', JavaExec) {
     description = 'Run Example 2 - dry-run feature'
     mainClass = 'com.esentri.quartz.example2.CarbonAwareTriggerDryRunExample'
     systemProperty('org.quartz.properties', 'com/esentri/quartz/example2/quartz.properties')
 }
-
