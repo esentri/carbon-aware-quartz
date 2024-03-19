@@ -100,6 +100,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
     private CarbonAwareExecutionState carbonAwareExecutionState = CarbonAwareExecutionState.PENDING;
     private Date optimalExecutionTime;
+    private Date configuredExecutionTime;
     private String carbonForecastLocation = "";
     private EmissionData currentForcast;
     /*
@@ -345,6 +346,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
         if (getEndTime() != null && pot != null && pot.after(getEndTime())) {
             return null;
         }
+        configuredExecutionTime = pot;
 
         if (carbonAwareExecutionState == CarbonAwareExecutionState.PENDING) {
             carbonAwareExecutionState = CarbonAwareExecutionState.READY;
@@ -508,79 +510,6 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
             setNextFireTime(new Date());
         }
     }
-
-    /**
-     * <p>
-     * Determines whether the date and (optionally) time of the given Calendar
-     * instance falls on a scheduled fire-time of this trigger.
-     * </p>
-     *
-     * <p>
-     * Equivalent to calling <code>willFireOn(cal, false)</code>.
-     * </p>
-     *
-     * @param test the date to compare
-     * @see #willFireOn(Calendar, boolean)
-     */
-//    public boolean willFireOn(Calendar test) {
-//        return willFireOn(test, false);
-//    }
-
-    /**
-     * <p>
-     * Determines whether the date and (optionally) time of the given Calendar
-     * instance falls on a scheduled fire-time of this trigger.
-     * </p>
-     *
-     * <p>
-     * Note that the value returned is NOT validated against the related
-     * org.quartz.Calendar (if any)
-     * </p>
-     *
-     * @param test    the date to compare
-     * @param dayOnly if set to true, the method will only determine if the
-     *                trigger will fire during the day represented by the given Calendar
-     *                (hours, minutes and seconds will be ignored).
-     * @see #willFireOn(Calendar)
-     */
-//    public boolean willFireOn(Calendar test, boolean dayOnly) {
-//
-//        test = (Calendar) test.clone();
-//
-//        test.set(Calendar.MILLISECOND, 0); // don't compare millis.
-//
-//        if (dayOnly) {
-//            test.set(Calendar.HOUR_OF_DAY, 0);
-//            test.set(Calendar.MINUTE, 0);
-//            test.set(Calendar.SECOND, 0);
-//        }
-//
-//        Date testTime = test.getTime();
-//
-//        Date fta = getFireTimeAfter(new Date(test.getTime().getTime() - 1000));
-//
-//        if (fta == null)
-//            return false;
-//
-//        Calendar p = Calendar.getInstance(test.getTimeZone());
-//        p.setTime(fta);
-//
-//        int year = p.get(Calendar.YEAR);
-//        int month = p.get(Calendar.MONTH);
-//        int day = p.get(Calendar.DATE);
-//
-//        if (dayOnly) {
-//            return (year == test.get(Calendar.YEAR)
-//                    && month == test.get(Calendar.MONTH)
-//                    && day == test.get(Calendar.DATE));
-//        }
-//
-//        while (fta.before(testTime)) {
-//            fta = getFireTimeAfter(fta);
-//        }
-//
-//        return fta.equals(testTime);
-//    }
 
     /**
      * <p>
@@ -783,6 +712,26 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     @Override
     public void setLocation(String location) {
         this.carbonForecastLocation = location;
+    }
+
+    @Override
+    public EmissionData getEmissionData() {
+        return currentForcast;
+    }
+
+    @Override
+    public Date getOptimalExecutionTime() {
+        return optimalExecutionTime;
+    }
+
+    @Override
+    public Date getConfiguredExecutionTime() {
+        return configuredExecutionTime;
+    }
+
+    @Override
+    public String getLocation() {
+        return carbonForecastLocation;
     }
 }
 
