@@ -1,6 +1,7 @@
 package com.esentri.quartz.carbonaware.plugins;
 
 import com.esentri.quartz.carbonaware.plugins.listeners.CarbonStatisticsTriggerListener;
+import com.esentri.quartz.carbonaware.plugins.listeners.TimeShiftingTriggerListener;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.spi.ClassLoadHelper;
@@ -27,8 +28,8 @@ public class CarbonAwarePlugin implements SchedulerPlugin {
                     restClientImplementationClass,
                     dryrun));
         }
-        // TODO: implement TimeShiftedTriggerListener
 
+        scheduler.getListenerManager().addTriggerListener(new TimeShiftingTriggerListener(dryrun));
     }
 
     @Override

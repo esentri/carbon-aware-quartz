@@ -1,6 +1,7 @@
 package com.esentri.quartz.carbonaware.plugins;
 
 import com.esentri.quartz.carbonaware.plugins.listeners.CarbonStatisticsTriggerListener;
+import com.esentri.quartz.carbonaware.plugins.listeners.TimeShiftingTriggerListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,12 +34,14 @@ class CarbonAwarePluginTest {
     }
 
     @Test
-    void shouldNotInitializeAnyListener_IfNoListenerIsEnabled() throws Exception {
+    void shouldInitializeTimeShiftingTriggerListenerByDefault() throws Exception {
         sut = new CarbonAwarePlugin();
 
         sut.initialize("name", scheduler, null);
 
-        assertThat(listenerManager.getTriggerListeners()).isEmpty();
+        assertThat(listenerManager.getTriggerListeners())
+                .singleElement()
+                .isInstanceOf(TimeShiftingTriggerListener.class);
     }
 
     @Test
@@ -51,7 +54,9 @@ class CarbonAwarePluginTest {
         sut.setEnableStatistics(false);
         sut.initialize("name", scheduler, null);
 
-        assertThat(listenerManager.getTriggerListeners()).isEmpty();
+        assertThat(listenerManager.getTriggerListeners())
+                .singleElement()
+                .isInstanceOf(TimeShiftingTriggerListener.class);
     }
 
     @Test
@@ -65,8 +70,8 @@ class CarbonAwarePluginTest {
         sut.initialize("name", scheduler, null);
 
         assertThat(listenerManager.getTriggerListeners())
+                .filteredOn(a -> a instanceof CarbonStatisticsTriggerListener)
                 .singleElement()
                 .isInstanceOf(CarbonStatisticsTriggerListener.class);
     }
-
 }
