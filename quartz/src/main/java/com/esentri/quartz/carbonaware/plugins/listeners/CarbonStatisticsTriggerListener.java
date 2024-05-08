@@ -4,7 +4,7 @@ import com.esentri.quartz.carbonaware.clients.persistence.PersistenceApi;
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
-import com.esentri.quartz.carbonaware.entity.Persistable;
+import com.esentri.quartz.carbonaware.entity.CarbonStatisticDto;
 import com.esentri.quartz.carbonaware.exceptions.ForecastUnavailableException;
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
@@ -20,9 +20,9 @@ import java.util.TimeZone;
 
 public class CarbonStatisticsTriggerListener extends TriggerListenerSupport {
 
-    PersistenceApi persistenceClient;
-    CarbonForecastApi restClient;
-    Boolean dryRun;
+    private final PersistenceApi persistenceClient;
+    private final CarbonForecastApi restClient;
+    private final Boolean dryRun;
 
     public CarbonStatisticsTriggerListener(
             String persistenceClientImplementationClass,
@@ -65,13 +65,13 @@ public class CarbonStatisticsTriggerListener extends TriggerListenerSupport {
                     Functions.convertDateToLocalDate(configuredExecutionTime, timeZone),
                     Functions.convertDateToLocalDate(configuredExecutionTime, timeZone)
                             .plusMinutes(jobDuration)
-                            .plusMinutes(5),
+                            .plusMinutes(1),
                     jobDuration);
 
             Double currentCarbonIntensity = extractCurrentCarbonIntensity(currentEmisions, location);
 
             persistenceClient.persist(
-                    new Persistable(
+                    new CarbonStatisticDto(
                             context.getFireInstanceId(),
                             context.getJobDetail().getKey().getName(),
                             context.getJobDetail().getKey().getGroup(),

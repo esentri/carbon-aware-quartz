@@ -1,5 +1,6 @@
 package com.esentri.quartz.carbonaware.plugins.listeners;
 
+import com.esentri.quartz.carbonaware.testsupport.CarbonForecastClient;
 import com.esentri.quartz.carbonaware.testsupport.EmissionDataImpl;
 import com.esentri.quartz.carbonaware.testsupport.PersistenceClient;
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
@@ -31,8 +32,8 @@ import static org.mockito.Mockito.when;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class CarbonStatisticsTriggerListenerTest {
 
-    private static final String PERSISTENCE_CLIENT_REF = "com.esentri.quartz.carbonaware.testsupport.PersistenceClient";
-    private static final String REST_CLIENT_REF = "com.esentri.quartz.carbonaware.testsupport.CarbonForecastClient";
+    private static final String PERSISTENCE_CLIENT_REF = PersistenceClient.class.getName();
+    private static final String REST_CLIENT_REF = CarbonForecastClient.class.getName();
 
     private static final Clock FIXED_CLOCK = Clock.fixed(
             LocalDateTime.of(2024, 3, 19, 0, 0)
@@ -47,14 +48,14 @@ class CarbonStatisticsTriggerListenerTest {
 
     private CarbonStatisticsTriggerListener sut;
 
-    private JobDetailImpl jobDetail = createJobDetail();
-    private TimeZone timeZone = TimeZone.getDefault();
+    private final JobDetailImpl jobDetail = createJobDetail();
+    private final TimeZone timeZone = TimeZone.getDefault();
     private CarbonAwareExecutionState triggerState = CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME;
-    private Date configuredExecutionTime = Date.from(FIXED_CLOCK.instant());
-    private Date optimalExecutionTime = Date.from(FIXED_CLOCK.instant().plus(5, ChronoUnit.HOURS));
-    private int duration = 10;
-    private String location = "de";
-    private EmissionDataImpl emissionData = new EmissionDataImpl(LocalDateTime.now(FIXED_CLOCK).plus(5, ChronoUnit.HOURS), 20.78);
+    private final Date configuredExecutionTime = Date.from(FIXED_CLOCK.instant());
+    private final Date optimalExecutionTime = Date.from(FIXED_CLOCK.instant().plus(5, ChronoUnit.HOURS));
+    private final int duration = 10;
+    private final String location = "de";
+    private final EmissionDataImpl emissionData = new EmissionDataImpl(LocalDateTime.now(FIXED_CLOCK).plusHours(5), 20.78);
 
     @BeforeEach
     void setUp() {
@@ -124,8 +125,8 @@ class CarbonStatisticsTriggerListenerTest {
                 .hasFieldOrPropertyWithValue("configuredTimestamp", LocalDateTime.of(2024, 3, 19, 0, 0).toInstant(ZoneOffset.UTC))
                 .hasFieldOrPropertyWithValue("executionTimestamp", LocalDateTime.of(2024, 3, 19, 5, 0).toInstant(ZoneOffset.UTC))
                 .hasFieldOrPropertyWithValue("jobDuration", 10)
-                .hasFieldOrPropertyWithValue("actualCarbonIntensity", 63.7)
-                .hasFieldOrPropertyWithValue("optimalCarbonIntensity", 20.78)
+                .hasFieldOrPropertyWithValue("carbonIntensityForConfiguredTimestamp", 63.7)
+                .hasFieldOrPropertyWithValue("carbonIntensityForRescheduledTimestamp", 20.78)
                 .hasFieldOrPropertyWithValue("location", "de")
                 .hasFieldOrPropertyWithValue("dryRun", false);
     }

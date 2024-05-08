@@ -102,7 +102,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     private Date optimalExecutionTime;
     private Date configuredExecutionTime;
     private String carbonForecastLocation = "";
-    private EmissionData currentForcast;
+    private EmissionData currentForecast;
     /*
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      *
@@ -384,7 +384,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
             }
 
             // store the current forecast for statistics
-            this.currentForcast = emissionData;
+            this.currentForecast = emissionData;
             this.optimalExecutionTime = convertToDate(emissionData.getTimestamp(), timeZone);
             this.carbonAwareExecutionState = CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME;
 
@@ -716,7 +716,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
     @Override
     public EmissionData getEmissionData() {
-        return currentForcast;
+        return currentForecast;
     }
 
     @Override
