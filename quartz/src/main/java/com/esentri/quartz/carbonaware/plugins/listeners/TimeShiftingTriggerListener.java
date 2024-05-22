@@ -1,53 +1,29 @@
-package com.esentri.quartz.carbonaware.plugins;
+package com.esentri.quartz.carbonaware.plugins.listeners;
 
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
 import org.quartz.JobExecutionContext;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.listeners.TriggerListenerSupport;
-import org.quartz.spi.ClassLoadHelper;
-import org.quartz.spi.SchedulerPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
+public class TimeShiftingTriggerListener extends TriggerListenerSupport {
 
-public class TimeShiftedJobVetoPlugin extends TriggerListenerSupport implements SchedulerPlugin  {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeShiftingTriggerListener.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TimeShiftedJobVetoPlugin.class);
+    private boolean dryRun;
 
-    public void setDryrun(boolean dryrun) {
-        this.dryrun = dryrun;
+    public TimeShiftingTriggerListener(boolean dryRun) {
+        this.dryRun = dryRun;
     }
-
-    private boolean dryrun;
-
 
     @Override
     public String getName() {
         return getClass().getName();
     }
-
-    @Override
-    public void initialize(String name, Scheduler scheduler, ClassLoadHelper loadHelper) throws SchedulerException {
-        LOGGER.info("Initialized plugin: {}", getName());
-        // initialize and register
-        scheduler.getListenerManager().addTriggerListener(this);
-    }
-
-    @Override
-    public void start() {
-        // not required
-    }
-
-    @Override
-    public void shutdown() {
-        // not required
-    }
-
 
     /**
      * Return true for next job execution, if a better execution time was determined by the {@link CarbonAwareCronTrigger}.
@@ -57,7 +33,7 @@ public class TimeShiftedJobVetoPlugin extends TriggerListenerSupport implements 
      * */
     @Override
     public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
-        if (dryrun && trigger instanceof CarbonAwareCronTrigger carbonAwareTrigger) {
+        if (dryRun && trigger instanceof CarbonAwareCronTrigger carbonAwareTrigger) {
             boolean isVeto = Objects.requireNonNull(carbonAwareTrigger).getTriggerState() == CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME;
             LOGGER.info("----- DRYRUN: Job veto: {} -----", !isVeto);
             return !isVeto;

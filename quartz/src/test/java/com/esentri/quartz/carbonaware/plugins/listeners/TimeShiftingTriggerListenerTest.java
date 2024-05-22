@@ -1,4 +1,4 @@
-package com.esentri.quartz.carbonaware.plugins;
+package com.esentri.quartz.carbonaware.plugins.listeners;
 
 import com.esentri.quartz.carbonaware.triggers.impl.CarbonAwareCronTriggerImpl;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
@@ -9,41 +9,28 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.quartz.TriggerListener;
 import org.quartz.core.ListenerManagerImpl;
 import org.quartz.core.QuartzScheduler;
-import org.quartz.impl.StdScheduler;
 import org.quartz.impl.triggers.CronTriggerImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class TimeShiftedJobVetoPluginTest {
+class TimeShiftingTriggerListenerTest {
 
     @Mock
     private QuartzScheduler quartzScheduler;
 
-    private TimeShiftedJobVetoPlugin sut;
+    private TimeShiftingTriggerListener sut;
 
     @BeforeEach
     void setUp() {
         when(quartzScheduler.getListenerManager()).thenReturn(new ListenerManagerImpl());
 
-        sut = new TimeShiftedJobVetoPlugin();
-    }
-
-    @Test
-    void shouldRegisterItself() throws Exception {
-        StdScheduler scheduler = new StdScheduler(quartzScheduler);
-
-        sut.initialize("test", scheduler, null);
-
-        assertThat(scheduler.getListenerManager().getTriggerListeners())
-                .singleElement()
-                .extracting(TriggerListener::getName)
-                .isEqualTo("com.esentri.quartz.carbonaware.plugins.TimeShiftedJobVetoPlugin");
+        sut = new TimeShiftingTriggerListener(false);
     }
 
     @Test
@@ -77,7 +64,7 @@ class TimeShiftedJobVetoPluginTest {
 
     @Test
     void shouldReturnTrue_forJobVeto_inDryRunMode_IfTriggerStateIs_DeterminedABetterExecutionTime() {
-        sut.setDryrun(true);
+        sut = new TimeShiftingTriggerListener(true);
 
         CarbonAwareCronTriggerImpl trigger = new CarbonAwareCronTriggerImpl();
         trigger.setCarbonAwareTriggerState(CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME);
@@ -89,7 +76,7 @@ class TimeShiftedJobVetoPluginTest {
 
     @Test
     void shouldReturnFalse_forJobVeto_inDryRunMode_IfTriggerStateIs_isReady() {
-        sut.setDryrun(true);
+        sut = new TimeShiftingTriggerListener(true);
 
         CarbonAwareCronTriggerImpl trigger = new CarbonAwareCronTriggerImpl();
         trigger.setCarbonAwareTriggerState(CarbonAwareExecutionState.READY);
@@ -101,7 +88,7 @@ class TimeShiftedJobVetoPluginTest {
 
     @Test
     void shouldReturnFalse_forJobVeto_inDryRunMode_IfTriggerStateIs_isCarbonDataUnavailable() {
-        sut.setDryrun(true);
+        sut = new TimeShiftingTriggerListener(true);
 
         CarbonAwareCronTriggerImpl trigger = new CarbonAwareCronTriggerImpl();
         trigger.setCarbonAwareTriggerState(CarbonAwareExecutionState.READY);

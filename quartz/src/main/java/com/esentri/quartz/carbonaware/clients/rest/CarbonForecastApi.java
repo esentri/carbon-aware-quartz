@@ -1,4 +1,4 @@
-package com.esentri.quartz.carbonaware.clients;
+package com.esentri.quartz.carbonaware.clients.rest;
 
 
 

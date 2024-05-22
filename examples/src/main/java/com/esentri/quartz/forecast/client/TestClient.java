@@ -2,7 +2,7 @@ package com.esentri.quartz.forecast.client;
 
 
 
-import com.esentri.quartz.carbonaware.clients.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 

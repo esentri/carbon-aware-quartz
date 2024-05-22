@@ -2,7 +2,6 @@ plugins {
     id 'java'
 }
 
-
 dependencies {
     implementation project(':quartz')
 
@@ -34,4 +33,10 @@ tasks.register('runExample2', JavaExec) {
     description = 'Run Example 2 - dry-run feature'
     mainClass = 'com.esentri.quartz.example2.CarbonAwareTriggerDryRunExample'
     systemProperty('org.quartz.properties', 'com/esentri/quartz/example2/quartz.properties')
+}
+
+tasks.register('runExample3', JavaExec) {
+    description = 'Run Example 3 - statistics'
+    mainClass = 'com.esentri.quartz.example3.CarbonAwareTriggerStatisticsExample'
+    systemProperty('org.quartz.properties', 'com/esentri/quartz/example3/quartz.properties')
 }

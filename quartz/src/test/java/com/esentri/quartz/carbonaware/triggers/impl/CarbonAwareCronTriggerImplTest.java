@@ -1,8 +1,10 @@
 package com.esentri.quartz.carbonaware.triggers.impl;
 
-import com.esentri.quartz.carbonaware.clients.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
+import com.esentri.quartz.carbonaware.testsupport.EmissionDataImpl;
+import com.esentri.quartz.carbonaware.testsupport.EmissionForecastImpl;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -298,60 +300,5 @@ class CarbonAwareCronTriggerImplTest {
 
         assertThat(result.toInstant()).isEqualTo(optimalExecutionDate.toInstant(ZONE_OFFSET));
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // ----
-    // ---- CarbonForecast Implementations
-    // ----
-    // -----------------------------------------------------------------------------------------------------------------
-    private static class EmissionForecastImpl implements EmissionForecast {
-
-        String location;
-        Integer windowSize;
-        List<EmissionData> emissionData;
-
-        public EmissionForecastImpl(String location, Integer windowSize, List<EmissionData> emissionData) {
-            this.location = location;
-            this.windowSize = windowSize;
-            this.emissionData = emissionData;
-        }
-
-        @Override
-        public String getLocation() {
-            return location;
-        }
-
-        @Override
-        public Integer getWindowSize() {
-            return windowSize;
-        }
-
-        @Override
-        public List<EmissionData> getOptimalDataPoints() {
-            return emissionData;
-        }
-    }
-
-    private static class EmissionDataImpl implements EmissionData {
-
-        public EmissionDataImpl(LocalDateTime timestamp, Double value) {
-            this.timestamp = timestamp;
-            this.value = value;
-        }
-
-        LocalDateTime timestamp;
-        Double value;
-
-        @Override
-        public LocalDateTime getTimestamp() {
-            return timestamp;
-        }
-
-        @Override
-        public Double getValue() {
-            return value;
-        }
-    }
-
 
 }

@@ -17,7 +17,8 @@
 
 package com.esentri.quartz.carbonaware.triggers;
 
-import com.esentri.quartz.carbonaware.clients.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
 import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
@@ -27,6 +28,7 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -156,4 +158,12 @@ public interface CarbonAwareCronTrigger extends Trigger {
     int getJobDuration();
 
     void setLocation(String location);
+
+    String getLocation();
+
+    EmissionData getEmissionData();
+
+    Date getOptimalExecutionTime();
+
+    Date getConfiguredExecutionTime();
 }

@@ -2,11 +2,10 @@ package com.esentri.quartz.example1.restclient;
 
 
 
-import com.esentri.quartz.carbonaware.clients.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
