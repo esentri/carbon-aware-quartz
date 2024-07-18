@@ -1,6 +1,8 @@
 plugins {
     id "java-library"
     id "maven-publish"
+    id "com.jaredsburrows.license" version "0.9.8"
+    id "org.owasp.dependencycheck" version "9.2.0"
 }
 
 repositories {
@@ -27,6 +29,7 @@ test {
 }
 
 publishing {
+
     publications {
         mavenJava(MavenPublication) {
             from components.java

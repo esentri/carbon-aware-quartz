@@ -23,7 +23,7 @@ public class CarbonAwareTriggerExample {
     }
 
     private void run() throws Exception {
-        JobDetail carbonDataDownloader = newJob(TimeShiftedJob.class)
+        JobDetail job = newJob(TimeShiftedJob.class)
                 .withIdentity("TimeShiftedJob", "carbon-aware")
                 .ofType(TimeShiftedJob.class)
                 .build();
@@ -41,7 +41,7 @@ public class CarbonAwareTriggerExample {
         StdSchedulerFactory sf = new StdSchedulerFactory();
         scheduler = sf.getScheduler();
 
-        scheduler.scheduleJob(carbonDataDownloader, carbonAwareTrigger);
+        scheduler.scheduleJob(job, carbonAwareTrigger);
         runScheduler(scheduler);
     }
 
