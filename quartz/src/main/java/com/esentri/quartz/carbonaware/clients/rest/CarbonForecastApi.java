@@ -1,7 +1,5 @@
 package com.esentri.quartz.carbonaware.clients.rest;
 
-
-
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 
 import java.time.LocalDateTime;

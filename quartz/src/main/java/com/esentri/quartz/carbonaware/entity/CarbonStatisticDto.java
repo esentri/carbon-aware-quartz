@@ -2,6 +2,11 @@ package com.esentri.quartz.carbonaware.entity;
 
 import java.time.Instant;
 
+/**
+ * DTO for statistics
+ *
+ * @author jannisschalk
+ * */
 public record CarbonStatisticDto(String jobExecutionId,
                                  String jobName,
                                  String jobGroupName,

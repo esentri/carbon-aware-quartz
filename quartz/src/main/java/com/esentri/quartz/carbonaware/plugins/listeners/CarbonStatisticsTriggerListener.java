@@ -2,9 +2,9 @@ package com.esentri.quartz.carbonaware.plugins.listeners;
 
 import com.esentri.quartz.carbonaware.clients.persistence.PersistenceApi;
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
+import com.esentri.quartz.carbonaware.entity.CarbonStatisticDto;
 import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
-import com.esentri.quartz.carbonaware.entity.CarbonStatisticDto;
 import com.esentri.quartz.carbonaware.exceptions.ForecastUnavailableException;
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
@@ -18,6 +18,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+
+/**
+ * TriggerListener to listen on triggerFired events to store all determined carbon intensity values with a provided
+ * {@link PersistenceApi}. To determine current carbon forecast an instance of {@link CarbonForecastApi} is required.
+ *
+ * @author jannisschalk
+ * */
 public class CarbonStatisticsTriggerListener extends TriggerListenerSupport {
 
     private final PersistenceApi persistenceClient;

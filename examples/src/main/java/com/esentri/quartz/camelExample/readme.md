@@ -1,4 +1,4 @@
-# Example 4
+# Camel Example
 
 Example using the Carbon-Aware Quarz Scheduler in Camel Routes
 

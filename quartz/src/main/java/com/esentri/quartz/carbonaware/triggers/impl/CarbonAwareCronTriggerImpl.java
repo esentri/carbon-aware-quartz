@@ -1,20 +1,3 @@
-/*
- * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy
- * of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- */
-
 package com.esentri.quartz.carbonaware.triggers.impl;
 
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
@@ -23,14 +6,7 @@ import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleBuilder;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
-import org.quartz.CronExpression;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.ScheduleBuilder;
-import org.quartz.Scheduler;
-import org.quartz.Trigger;
-import org.quartz.TriggerUtils;
-
+import org.quartz.*;
 import org.quartz.impl.triggers.AbstractTrigger;
 import org.quartz.impl.triggers.CoreTrigger;
 import org.slf4j.Logger;
@@ -40,11 +16,7 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 
 
 /**

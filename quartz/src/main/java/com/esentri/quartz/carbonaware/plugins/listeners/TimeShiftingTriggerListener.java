@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
+/**
+ * TriggerListener to cancel a {@link org.quartz.Job} execution if a better execution time is determined by a
+ * {@link CarbonAwareCronTrigger}
+ *
+ * @author jannisschalk
+ * */
 public class TimeShiftingTriggerListener extends TriggerListenerSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeShiftingTriggerListener.class);

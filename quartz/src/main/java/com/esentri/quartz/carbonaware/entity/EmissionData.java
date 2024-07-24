@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 /**
  * Subset of Green Software Foundation SDK EmissionForecast
+ *
+ * @author jannisschalk
  * */
 public interface EmissionData {
 

@@ -1,5 +1,8 @@
 package com.esentri.quartz.carbonaware.triggers.states;
 
+/**
+ *  @author jannisschalk
+ * */
 public enum CarbonAwareExecutionState {
     PENDING,
 

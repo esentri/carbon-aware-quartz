@@ -114,14 +114,13 @@ To store this information, a `persistenceClientImplementationClass` is required,
 2. [dry-run enabled](./examples/src/main/java/com/esentri/quartz/example2/readme.md)
 3. [statistics enabled](./examples/src/main/java/com/esentri/quartz/example2/readme.md)
 4. [Apache Camel](./examples/src/main/java/com/esentri/quartz/camelExample/readme.md)
-
-
+5. [SpringBoot](./examples/src/main/java/com/esentri/quartz/springboot/readme.md)
 
 #### Properties
 
-| property                                                        | type      | default | description |
-|-----------------------------------------------------------------|-----------|---------|-------------|
-| `org.quartz.plugin.<NAME>.dryrun`                               | `boolean` | `false` | asdf        |
-| `org.quartz.plugin.<NAME>.restClientImplementationClass`        | `Class`   | `null`  | asdf        |
-| `org.quartz.plugin.<NAME>.persistenceClientImplementationClass` | `Class`   | `null`  | asdf        |
-| `org.quartz.plugin.<NAME>.enableStatistics`                     | `boolean` | `false` | adsf        |
+| property                                                        | type      | default | description                                                                                                                                                                                                      |
+|-----------------------------------------------------------------|-----------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `org.quartz.plugin.<NAME>.dryrun`                               | `boolean` | `false` | Enables the dryrun feature. The CarbonAwareCronTrigger will determine a better execution time, but the Job will **not** be re-scheduled. All statistics feature will also work in combination with this feature. |
+| `org.quartz.plugin.<NAME>.enableStatistics`                     | `boolean` | `false` | Enables the statisctis feature. To persist the information about the saved carbon intensity.                                                                                                                     |
+| `org.quartz.plugin.<NAME>.restClientImplementationClass`        | `Class`   | `null`  | The implementation class for the `CarbonForecastApi.class` used in statistics feature. Only required, `enableStatistics=true`. Implementation Class have to provide a default constructor, for instantiation.    |
+| `org.quartz.plugin.<NAME>.persistenceClientImplementationClass` | `Class`   | `null`  | The implementation class for the `PersistenceApi.class` used in statistics feature. Only required, `enableStatistics=true`. Implementation Class have to provide a default constructor, for instantiation.       |                                                                                                                                                                                                      |

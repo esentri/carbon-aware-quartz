@@ -4,6 +4,8 @@ import java.util.List;
 
 /**
  * Subset of Green Software Foundation SDK EmissionForecast
+ *
+ * @author jannisschalk
  * */
 public interface EmissionForecast {
 

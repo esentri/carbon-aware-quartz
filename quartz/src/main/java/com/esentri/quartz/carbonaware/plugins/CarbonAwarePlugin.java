@@ -9,6 +9,12 @@ import org.quartz.spi.SchedulerPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Plugin to initialize the {@link TimeShiftingTriggerListener} and if configured in
+ * quartz.properties the {@link CarbonStatisticsTriggerListener}
+ *
+ * @author jannisschalk
+ * */
 public class CarbonAwarePlugin implements SchedulerPlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CarbonAwarePlugin.class);
