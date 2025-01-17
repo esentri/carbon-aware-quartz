@@ -1,4 +1,4 @@
-package com.esentri.quartz.camelExample;
+package com.esentri.quartz.camelexample;
 
 import org.apache.camel.main.Main;
 

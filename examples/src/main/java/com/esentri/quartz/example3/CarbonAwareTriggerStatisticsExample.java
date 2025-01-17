@@ -5,6 +5,7 @@ import com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleB
 import com.esentri.quartz.forecast.client.TestClient;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +20,13 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class CarbonAwareTriggerStatisticsExample {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CarbonAwareTriggerStatisticsExample.class);
-    private Scheduler scheduler;
 
     public static void main(String[] args) throws Exception {
         CarbonAwareTriggerStatisticsExample example = new CarbonAwareTriggerStatisticsExample();
         example.run();
     }
 
-    private void run() throws Exception {
+    private void run() throws SchedulerException, InterruptedException {
         JobDetail carbonDataDownloader = newJob(TimeShiftedJob.class)
                 .withIdentity("TimeShiftedJob", "carbon-aware")
                 .ofType(TimeShiftedJob.class)
@@ -44,13 +44,13 @@ public class CarbonAwareTriggerStatisticsExample {
                 .build();
 
         StdSchedulerFactory sf = new StdSchedulerFactory();
-        scheduler = sf.getScheduler();
+        var scheduler = sf.getScheduler();
 
         scheduler.scheduleJob(carbonDataDownloader, carbonAwareTrigger);
         runScheduler(scheduler);
     }
 
-    private static void runScheduler(Scheduler scheduler) throws Exception {
+    private static void runScheduler(Scheduler scheduler) throws SchedulerException, InterruptedException {
         LOGGER.info("------- Starting Scheduler -----------------");
         scheduler.start();
 

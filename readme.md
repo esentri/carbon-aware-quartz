@@ -113,7 +113,7 @@ To store this information, a `persistenceClientImplementationClass` is required,
 1. [Simple Time-Shifted job execution](./examples/src/main/java/com/esentri/quartz/example1/readme.md)
 2. [dry-run enabled](./examples/src/main/java/com/esentri/quartz/example2/readme.md)
 3. [statistics enabled](./examples/src/main/java/com/esentri/quartz/example2/readme.md)
-4. [Apache Camel](./examples/src/main/java/com/esentri/quartz/camelExample/readme.md)
+4. [Apache Camel](./examples/src/main/java/com/esentri/quartz/camelexample/readme.md)
 5. [SpringBoot](./examples/src/main/java/com/esentri/quartz/springboot/readme.md)
 
 #### Properties

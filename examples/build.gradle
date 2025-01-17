@@ -1,19 +1,19 @@
 plugins {
     id 'java'
     id "com.jaredsburrows.license" version "0.9.8"
-    id 'org.springframework.boot' version '3.2.3'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 dependencies {
     implementation project(':quartz')
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-    implementation 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    implementation 'org.projectlombok:lombok:1.18.36'
 
     implementation "org.quartz-scheduler:quartz:$quartzVersion"
-    implementation "ch.qos.logback:logback-classic:1.4.14"
-    implementation(platform("org.apache.camel:camel-bom:4.4.0")) {
+    implementation "ch.qos.logback:logback-classic:1.5.12"
+    implementation(platform("org.apache.camel:camel-bom:4.4.3")) {
         exclude group: 'com.mchange', module: 'c3p0'
     }
     implementation "org.apache.camel:camel-main"
@@ -22,12 +22,11 @@ dependencies {
         exclude group: 'com.mchange', module: 'c3p0'
     }
 
-
     //SpringBoot example
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.apache.camel.springboot:camel-spring-boot-starter:4.4.1'
+    implementation 'org.apache.camel.springboot:camel-spring-boot-starter:4.5.0'
     implementation 'com.h2database:h2'
     implementation 'org.hibernate.orm:hibernate-community-dialects'
 }
@@ -63,5 +62,4 @@ tasks.register('runExample3', JavaExec) {
 tasks.register('runExampleSpringBoot', JavaExec) {
     description = 'Run SpringBoot Example - jdbc jobstore and statistics'
     mainClass = 'com.esentri.quartz.springboot.QuartzSpringBootExample'
-//    systemProperty('org.quartz.properties', 'com/esentri/quartz/example3/quartz.properties')
 }

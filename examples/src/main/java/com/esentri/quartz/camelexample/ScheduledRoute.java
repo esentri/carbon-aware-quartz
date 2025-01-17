@@ -1,10 +1,10 @@
-package com.esentri.quartz.camelExample;
+package com.esentri.quartz.camelexample;
 
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleBuilder;
-import com.esentri.quartz.example1.restclient.TestClient;
+import com.esentri.quartz.forecast.client.TestClient;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ScheduledRoute extends RouteBuilder {

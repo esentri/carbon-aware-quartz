@@ -1,4 +1,4 @@
-package com.esentri.quartz.camelExample;
+package com.esentri.quartz.camelexample;
 
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.quartz;
 
