@@ -4,6 +4,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+**carbon-aware-quartz-db.*.db
+
 ### IntelliJ IDEA ###
 .idea*
 .idea/modules.xml

@@ -2,6 +2,7 @@ package com.esentri.quartz.carbonaware.clients.rest;
 
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author jannisschalk
  * */
-public interface CarbonForecastApi {
+public interface CarbonForecastApi extends Serializable {
 
     /**
      * Get the best execution time with minimal grid carbon intensity.

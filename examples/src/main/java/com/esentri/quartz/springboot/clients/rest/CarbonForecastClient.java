@@ -2,13 +2,9 @@ package com.esentri.quartz.springboot.clients.rest;
 
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
-import com.esentri.quartz.springboot.clients.jdbc.CarbonStatisticsRepository;
 import com.esentri.quartz.springboot.clients.rest.entity.EmissionForecastImpl;
 import com.esentri.quartz.springboot.configuration.ApplicationContextProvider;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.esentri.quartz.springboot.configuration.RestTemplateConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpEntity;
@@ -16,9 +12,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -30,14 +26,17 @@ import java.util.Map;
 @Component
 public class CarbonForecastClient implements CarbonForecastApi {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private static final String URL = "https://forecast.carbon-aware-computing.com/emissions/forecasts/current" ;
     private static final String API_KEY= "<your api key>";
 
-    private final RestTemplate restTemplate;
+    private final RestTemplateConfiguration.SerializableRestTemplate restTemplate;
 
     public CarbonForecastClient() {
         ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-        this.restTemplate = applicationContext.getBean(RestTemplate.class);
+        this.restTemplate = applicationContext.getBean(RestTemplateConfiguration.SerializableRestTemplate.class);
     }
 
 

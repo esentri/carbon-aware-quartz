@@ -1,5 +1,6 @@
 package com.esentri.quartz.carbonaware.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -7,7 +8,7 @@ import java.time.LocalDateTime;
  *
  * @author jannisschalk
  * */
-public interface EmissionData {
+public interface EmissionData extends Serializable {
 
     LocalDateTime getTimestamp();
 

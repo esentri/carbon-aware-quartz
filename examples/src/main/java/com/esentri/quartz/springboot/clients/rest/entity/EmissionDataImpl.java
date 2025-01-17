@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
@@ -12,6 +13,9 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmissionDataImpl implements EmissionData {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private OffsetDateTime timestamp;
     private Double value;

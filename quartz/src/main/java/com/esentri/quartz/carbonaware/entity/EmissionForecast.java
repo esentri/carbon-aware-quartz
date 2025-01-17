@@ -1,5 +1,6 @@
 package com.esentri.quartz.carbonaware.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  *
  * @author jannisschalk
  * */
-public interface EmissionForecast {
+public interface EmissionForecast extends Serializable {
 
     String getLocation();
 

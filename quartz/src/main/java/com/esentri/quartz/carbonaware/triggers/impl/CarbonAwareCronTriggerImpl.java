@@ -6,12 +6,14 @@ import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleBuilder;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
+import com.esentri.quartz.carbonaware.util.Functions;
 import org.quartz.*;
 import org.quartz.impl.triggers.AbstractTrigger;
 import org.quartz.impl.triggers.CoreTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -46,6 +48,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
      *
      * @see java.io.Serializable
      */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected static final int YEAR_TO_GIVEUP_SCHEDULING_AT = CronExpression.MAX_YEAR;
@@ -64,7 +67,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     private Date endTime = null;
     private Date nextFireTime = null;
     private Date previousFireTime = null;
-    private transient TimeZone timeZone = null;
+    private TimeZone timeZone = TimeZone.getDefault();
 
     private CarbonForecastApi carbonForecastApi;
     private int jobDurationInMinutes = 1;
@@ -96,7 +99,6 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     public CarbonAwareCronTriggerImpl() {
         super();
         setStartTime(new Date());
-        setTimeZone(TimeZone.getDefault());
     }
 
     /*
@@ -387,11 +389,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     }
 
     private static LocalDateTime convertToLocalDate(Date date, TimeZone timeZone) {
-        if(date == null) {
-            throw new IllegalArgumentException("Date must not be null");
-        }
-
-        return LocalDateTime.ofInstant(date.toInstant(), timeZone.toZoneId());
+        return Functions.convertDateToLocalDate(date, timeZone);
     }
 
     private static Date convertToDate(LocalDateTime date, TimeZone timeZone) {
@@ -666,8 +664,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
             this.deadlineCronExpression = new CronExpression(deadlineCronExpression);
             this.deadlineCronExpression.setTimeZone(origTz);
         } catch (ParseException e) {
-            throw new RuntimeException("CronExpression '" + deadlineCronExpression
-                    + "' is invalid.", e);
+            throw new IllegalArgumentException("CronExpression '%s' is invalid!".formatted(deadlineCronExpression), e);
         }
     }
 
@@ -704,6 +701,16 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     @Override
     public String getLocation() {
         return carbonForecastLocation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), cronEx, startTime, endTime, nextFireTime, previousFireTime, timeZone, carbonForecastApi, jobDurationInMinutes, deadlineCronExpression, carbonAwareExecutionState, optimalExecutionTime, configuredExecutionTime, carbonForecastLocation, currentForecast);
     }
 }
 
