@@ -38,6 +38,4 @@ public class TriggerConfiguration {
                         .withCarbonForecastApi(carbonForecastClient))
                 .build();
     }
-
-
 }

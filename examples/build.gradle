@@ -26,9 +26,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework:spring-aspects'
     implementation 'org.apache.camel.springboot:camel-spring-boot-starter:4.5.0'
     implementation 'com.h2database:h2'
     implementation 'org.hibernate.orm:hibernate-community-dialects'
+
+    implementation 'org.postgresql:postgresql:42.7.4'
 }
 
 tasks.withType(JavaExec).configureEach {
@@ -59,7 +63,14 @@ tasks.register('runExample3', JavaExec) {
     systemProperty('org.quartz.properties', 'com/esentri/quartz/example3/quartz.properties')
 }
 
-tasks.register('runExampleSpringBoot', JavaExec) {
-    description = 'Run SpringBoot Example - jdbc jobstore and statistics'
+tasks.register('runExampleSpringBoot-h2', JavaExec) {
+    description = 'Run SpringBoot Example with embedded H2 DB - jdbc jobstore and statistics'
     mainClass = 'com.esentri.quartz.springboot.QuartzSpringBootExample'
+    systemProperty('spring.profiles.active', 'h2')
+}
+
+tasks.register('runExampleSpringBoot-postgres', JavaExec) {
+    description = 'Run SpringBoot Example with external Postgres DB- jdbc jobstore and statistics'
+    mainClass = 'com.esentri.quartz.springboot.QuartzSpringBootExample'
+    systemProperty('spring.profiles.active', 'postgres')
 }

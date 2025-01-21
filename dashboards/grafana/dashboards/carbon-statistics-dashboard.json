@@ -1,0 +1,805 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "uid": "carbon-statistics"
+      },
+      "description": "Saved carbon intensity over all jobs and all time",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "dark-green",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "max": 99,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "%"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto",
+        "text": {
+          "titleSize": 1
+        }
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "format": "table",
+          "hide": true,
+          "rawSql": "SELECT SUM(optimal_carbon_intensity) FROM carbon_statistics LIMIT 50 ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "SUM",
+                "parameters": [
+                  {
+                    "name": "optimal_carbon_intensity",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "carbon_statistics"
+        },
+        {
+          "datasource": {
+            "type": "carbon-statistics",
+            "uid": "carbon-statistics"
+          },
+          "editorMode": "builder",
+          "format": "table",
+          "hide": true,
+          "rawSql": "SELECT SUM(actual_carbon_intensity) FROM carbon_statistics LIMIT 50 ",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "name": "SUM",
+                "parameters": [
+                  {
+                    "name": "actual_carbon_intensity",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "carbon_statistics"
+        },
+        {
+          "datasource": {
+            "name": "Expression",
+            "type": "__expr__",
+            "uid": "__expr__"
+          },
+          "expression": "100-($A/$B)*100",
+          "hide": false,
+          "refId": "C",
+          "type": "math"
+        }
+      ],
+      "title": "Total saved Carton-Intensity %",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "carbon-statistics",
+        "uid": "carbon-statistics"
+      },
+      "description": "Carbon intensity before the job was time-shifted (planed execution time by cron trigger)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 2,
+          "fieldMinMax": true,
+          "mappings": [],
+          "max": 1100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              },
+              {
+                "color": "dark-green",
+                "value": 50
+              },
+              {
+                "color": "light-green",
+                "value": 150
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 250
+              },
+              {
+                "color": "dark-yellow",
+                "value": 350
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 450
+              },
+              {
+                "color": "light-red",
+                "value": 550
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 650
+              },
+              {
+                "color": "#622700",
+                "value": 750
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 17,
+        "x": 7,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "format": "table",
+          "rawSql": "SELECT AVG(actual_carbon_intensity) AS \"avg_actual_carbon_intensity\", job_name FROM carbon_statistics GROUP BY job_name LIMIT 50 ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "alias": "\"avg_actual_carbon_intensity\"",
+                "name": "AVG",
+                "parameters": [
+                  {
+                    "name": "actual_carbon_intensity",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "job_name",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "job_name",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [],
+              "id": "88bbbbbb-0123-4456-b89a-b19483634bd9",
+              "type": "group"
+            }
+          },
+          "table": "carbon_statistics"
+        }
+      ],
+      "title": "Average Planed Carbon Intensity (gCO2/kWh)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "uid": "carbon-statistics"
+      },
+      "description": "Saved carbon intensity over all jobs and all time",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "dark-green",
+            "mode": "fixed"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto",
+        "text": {
+          "titleSize": 1
+        }
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "format": "table",
+          "hide": true,
+          "rawSql": "SELECT SUM(optimal_carbon_intensity) FROM carbon_statistics LIMIT 50 ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "SUM",
+                "parameters": [
+                  {
+                    "name": "optimal_carbon_intensity",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "carbon_statistics"
+        },
+        {
+          "datasource": {
+            "type": "carbon-statistics",
+            "uid": "carbon-statistics"
+          },
+          "editorMode": "builder",
+          "format": "table",
+          "hide": true,
+          "rawSql": "SELECT SUM(actual_carbon_intensity) FROM carbon_statistics LIMIT 50 ",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "name": "SUM",
+                "parameters": [
+                  {
+                    "name": "actual_carbon_intensity",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "carbon_statistics"
+        },
+        {
+          "datasource": {
+            "name": "Expression",
+            "type": "__expr__",
+            "uid": "__expr__"
+          },
+          "expression": "$B-$A",
+          "hide": false,
+          "refId": "C",
+          "type": "math"
+        }
+      ],
+      "title": "Total saved Carton-Intensity (gCO2/kWh)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "carbon-statistics",
+        "uid": "carbon-statistics"
+      },
+      "description": "Carbon intensity after the job was time-shifted",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 2,
+          "fieldMinMax": true,
+          "mappings": [],
+          "max": 1100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              },
+              {
+                "color": "dark-green",
+                "value": 50
+              },
+              {
+                "color": "light-green",
+                "value": 150
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 250
+              },
+              {
+                "color": "dark-yellow",
+                "value": 350
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 450
+              },
+              {
+                "color": "light-red",
+                "value": 550
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 650
+              },
+              {
+                "color": "#622700",
+                "value": 750
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 17,
+        "x": 7,
+        "y": 8
+      },
+      "id": 2,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "format": "table",
+          "rawSql": "SELECT AVG(optimal_carbon_intensity) AS \"avg_optimal_carbon_intensity\", job_name FROM carbon_statistics GROUP BY job_name LIMIT 50 ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "alias": "\"avg_optimal_carbon_intensity\"",
+                "name": "AVG",
+                "parameters": [
+                  {
+                    "name": "optimal_carbon_intensity",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "job_name",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "job_name",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "carbon_statistics"
+        }
+      ],
+      "title": "Average Used Carbon Intensity (gCO2/kWh)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "PCABE608A50549779"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 0,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "format": "table",
+          "rawSql": "SELECT job_name AS \"Job\", COUNT(job_execution_id) AS \"count\" FROM carbon_statistics GROUP BY job_name LIMIT 50 ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "alias": "\"Job\"",
+                "parameters": [
+                  {
+                    "name": "job_name",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "alias": "\"count\"",
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "job_execution_id",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "job_name",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "carbon_statistics"
+        }
+      ],
+      "title": "Total executed Jobs",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "PCABE608A50549779"
+      },
+      "description": "Jobs waiting for execution after they are rescheduled by the carbon-aware trigger",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 17,
+        "x": 7,
+        "y": 16
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "format": "table",
+          "rawSql": "SELECT job_name AS \"Job-Name\", next_fire_time AS \"time\" FROM qrtz_triggers WHERE trigger_state = 'WAITING' GROUP BY next_fire_time, job_name LIMIT 50 ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "alias": "\"Job-Name\"",
+                "parameters": [
+                  {
+                    "name": "job_name",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "alias": "\"time\"",
+                "parameters": [
+                  {
+                    "name": "next_fire_time",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "next_fire_time",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "job_name",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "98988888-cdef-4012-b456-71948844b2be",
+                  "properties": {
+                    "field": "trigger_state",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "WAITING"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "aa8ba88b-0123-4456-b89a-b194884337ea",
+              "type": "group"
+            },
+            "whereString": "trigger_state = 'WAITING'"
+          },
+          "table": "qrtz_triggers"
+        }
+      ],
+      "title": "Jobs waiting for execution",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Carbon-Statistics",
+  "uid": "ceaijipu7yf40e",
+  "version": 12,
+  "weekStart": ""
+}

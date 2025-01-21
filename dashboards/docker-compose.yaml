@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:17
+    hostname: carbon_aware_db
+    restart: unless-stopped
+    ports:
+      - "5444:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=carbon
+      - POSTGRES_USER=carbon
+      - POSTGRES_PASSWORD=carbon
+  grafana:
+    build: ./grafana
+    hostname: grafana
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_SECURITY_DISABLE_GRAVATAR=true
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_USERS_DEFAULT_LANGUAGE=detect
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=carbon
+      - DATABASE_USER=carbon
+      - DATABASE_PASS=carbon
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana:/var/lib/grafana
+volumes:
+  grafana:
+  postgres:

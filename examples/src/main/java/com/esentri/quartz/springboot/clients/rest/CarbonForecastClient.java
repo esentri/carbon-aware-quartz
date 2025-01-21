@@ -17,10 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @DependsOn("applicationContextProvider")
 @Component
@@ -39,36 +36,32 @@ public class CarbonForecastClient implements CarbonForecastApi {
         this.restTemplate = applicationContext.getBean(RestTemplateConfiguration.SerializableRestTemplate.class);
     }
 
-
     @Override
     public List<EmissionForecast> getEmissionForecastCurrent(
-            List<String> list,
-            LocalDateTime localDateTime,
-            LocalDateTime localDateTime1,
-            Integer integer) {
-
+            List<String> location,
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            Integer jobDuration) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("x-api-key", API_KEY);
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
         Map<String, String> params = new HashMap<>();
-        params.put("location", list.get(0));
-        params.put("dataStartAt", localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        params.put("dataEndAt", localDateTime1.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        params.put("windowSize", String.valueOf(integer));
+        params.put("location", location.get(0));
+        params.put("dataStartAt", startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        params.put("dataEndAt", endTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        params.put("windowSize", String.valueOf(jobDuration));
 
-
-        String urlTemplate = UriComponentsBuilder.fromHttpUrl(URL)
+        String urlTemplate = UriComponentsBuilder.fromUriString(URL)
                 .queryParam("location", "{location}")
                 .queryParam("dataStartAt", "{dataStartAt}")
                 .queryParam("dataEndAt", "{dataEndAt}")
                 .queryParam("windowSize", "{windowSize}")
                 .encode()
                 .toUriString();
-
         ResponseEntity<EmissionForecastResponse> result = restTemplate.exchange(urlTemplate, HttpMethod.GET, requestEntity, EmissionForecastResponse.class, params);
 
-        return new ArrayList<>(result.getBody());
+        return new ArrayList<>(Objects.requireNonNull(result.getBody()));
     }
 
     private static class EmissionForecastResponse extends ArrayList<EmissionForecastImpl> {
