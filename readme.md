@@ -7,6 +7,14 @@ The project is enhanced by carbon-aware principles from
 the [Green Software Foundation](https://greensoftware.foundation/)
 All principles of the Green Software Foundation can be found [here](https://learn.greensoftware.foundation/)
 
+## License
+
+This project is primarily licensed under the **MIT License**.  
+However, some files include code from the [Quartz Scheduler](https://github.com/quartz-scheduler/quartz/blob/main/docs/index.adoc) project,  
+which is licensed under the **Apache License 2.0**.
+
+For details, see the [LICENSE](LICENSE) file.
+
 ## Carbon Awareness
 
 > **[Principle](https://learn.greensoftware.foundation/carbon-awareness)**:
@@ -36,16 +44,17 @@ at the execution timestamp.
 
 ### Installation
 
-As this project is a enhancement of the quartz-scheduler, the quartz dependency is required on projects classpath.
-
+As this project is an enhancement of the quartz-scheduler, the quartz dependency is required on projects classpath.
+Also, an implementation of Slf4J is required on projects classpath.
 ```groovy
 dependencies {
-    implementation "org.quartz-scheduler:quartz:2.5.0"
+    implementation "org.quartz-scheduler:quartz:2.5.X"
+    implementation "org.slf4j:slf4j-api:2.X.X"
     implementation 'com.esentri.quartz:carbon-aware-quartz:1.0.0'
 }
 ```
 
-Now you can configure your Scheduler and Jobs. By default the carbon-aware plugin is inactive and must be configured via
+Now you can configure your Scheduler and Jobs. By default, the carbon-aware plugin is inactive and must be configured via
 application properties.
 
 #### User Guide

@@ -1,3 +1,21 @@
+/*
+ * Portions of this file are based on the Quartz Scheduler project,
+ * Copyright (c) Terracotta, Inc. Licensed under the Apache License, Version 2.0.
+ *
+ * Modifications and extensions Copyright (c) 2025 esentri AG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.esentri.quartz.carbonaware.triggers;
 
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
@@ -5,6 +23,7 @@ import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
 import org.quartz.*;
 
+import java.io.Serial;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -83,14 +102,25 @@ import java.util.TimeZone;
  * "daylight savings" can cause a skip or a repeat depending on whether the
  * time moves back or jumps forward.</li>
  * </ul>
- * 
- * @see CronScheduleBuilder
+ *
+ * <p>
+ * Custom implementation inspired by Quartz's {@link CronTrigger}.
+ * This class introduces additional functionality while maintaining
+ * compatibility with existing Quartz scheduling mechanisms.
+ * <br>
+ * Based on Quartz Scheduler (Copyright (c) Terracotta, Inc.)
+ * Licensed under Apache License 2.0.
+ * </p>
+ *
+ * @see com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleBuilder
  * @see TriggerBuilder
- * 
- * @author jannisschalk
+ *
+ * @author Terracotta, Inc.
+ * @author jannisschalk, esentri AG (modifications & extensions)
  */
 public interface CarbonAwareCronTrigger extends Trigger {
 
+    @Serial
     long serialVersionUID = -8644953146451592766L;
     
     /**
@@ -118,7 +148,7 @@ public interface CarbonAwareCronTrigger extends Trigger {
     /**
      * <p>
      * Returns the time zone for which the <code>cronExpression</code> of
-     * this <code>CronTrigger</code> will be resolved.
+     * this <code>CarbonAwareCronTrigger</code> will be resolved.
      * </p>
      */
     TimeZone getTimeZone();

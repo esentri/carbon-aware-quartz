@@ -1,3 +1,22 @@
+/*
+ * Portions of this file are based on the Quartz Scheduler project,
+ * Copyright (c) Terracotta, Inc. Licensed under the Apache License, Version 2.0.
+ *
+ * Modifications and extensions Copyright (c) 2025 esentri AG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.esentri.quartz.carbonaware.triggers.builders;
 
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
@@ -10,7 +29,7 @@ import java.text.ParseException;
 import java.util.TimeZone;
 
 /**
- * <code>CronScheduleBuilder</code> is a {@link ScheduleBuilder} that defines
+ * <code>CarbonAwareCronScheduleBuilder</code> is a {@link ScheduleBuilder} that defines
  * {@link CronExpression}-based schedules for <code>Trigger</code>s.
  *
  * <p>
@@ -38,24 +57,34 @@ import java.util.TimeZone;
  *
  * </pre>
  *
+ * <p>
+ * Custom implementation inspired by Quartz's {@link CronScheduleBuilder}.
+ * This class introduces additional functionality while maintaining
+ * compatibility with existing Quartz scheduling mechanisms.
+ * <br>
+ * Based on Quartz Scheduler (Copyright (c) Terracotta, Inc.)
+ * Licensed under Apache License 2.0.
+ * </p>
+ *
  * @see CronExpression
- * @see CronTrigger
+ * @see CarbonAwareCronTrigger
  * @see ScheduleBuilder
  * @see SimpleScheduleBuilder
  * @see CalendarIntervalScheduleBuilder
  * @see TriggerBuilder
  *
- * @author jannisschalk
+ * @author Terracotta, Inc.
+ * @author jannisschalk, esentri AG (modifications & extensions)
  */
 public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareCronTrigger> {
 
-    private CronExpression cronExpression;
+    private final CronExpression cronExpression;
     private CarbonForecastApi carbonForecastApi;
     private int duration;
     private String deadlineCronExpression;
     private String location;
 
-    private int misfireInstruction = CronTrigger.MISFIRE_INSTRUCTION_SMART_POLICY;
+    private int misfireInstruction = Trigger.MISFIRE_INSTRUCTION_SMART_POLICY;
 
     protected CarbonAwareCronScheduleBuilder(CronExpression cronExpression) {
         if (cronExpression == null) {
@@ -95,9 +124,6 @@ public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareC
         return this;
     }
 
-    /**
-     *
-     * */
     public CarbonAwareCronScheduleBuilder withCarbonForecastApi(CarbonForecastApi carbonForecastApi) {
         this.carbonForecastApi = carbonForecastApi;
         return this;
@@ -114,13 +140,13 @@ public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareC
     }
 
     /**
-     * Create a CronScheduleBuilder with the given cron-expression string -
+     * Create a CarbonAwareCronScheduleBuilder with the given cron-expression string -
      * which is presumed to be a valid cron expression (and hence only a
-     * RuntimeException will be thrown if it is not).
+     * IllegalArgumentException will be thrown if it is not).
      *
      * @param cronExpression the cron expression string to base the schedule on.
-     * @return the new CronScheduleBuilder
-     * @throws RuntimeException wrapping a ParseException if the expression is invalid
+     * @return the new CarbonAwareCronScheduleBuilder
+     * @throws IllegalArgumentException wrapping a ParseException if the expression is invalid
      * @see CronExpression
      */
     public static CarbonAwareCronScheduleBuilder cronSchedule(String cronExpression) {
@@ -129,13 +155,12 @@ public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareC
         } catch (ParseException e) {
             // all methods of construction ensure the expression is valid by
             // this point...
-            throw new RuntimeException("CronExpression '" + cronExpression
-                    + "' is invalid.", e);
+            throw new IllegalArgumentException("CronExpression '%s' is invalid.".formatted(cronExpression), e);
         }
     }
 
     /**
-     * Create a CronScheduleBuilder with the given cron-expression.
+     * Create a CarbonAwareCronScheduleBuilder with the given cron-expression.
      *
      * @param cronExpression the cron expression to base the schedule on.
      * @return the new CronScheduleBuilder
@@ -149,7 +174,7 @@ public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareC
      * The <code>TimeZone</code> in which to base the schedule.
      *
      * @param timezone the time-zone for the schedule.
-     * @return the updated CronScheduleBuilder
+     * @return the updated CarbonAwareCronScheduleBuilder
      * @see CronExpression#getTimeZone()
      */
     public CarbonAwareCronScheduleBuilder inTimeZone(TimeZone timezone) {
@@ -161,7 +186,7 @@ public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareC
      * If the Trigger misfires, use the
      * {@link Trigger#MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY} instruction.
      *
-     * @return the updated CronScheduleBuilder
+     * @return the updated CarbonAwareCronScheduleBuilder
      * @see Trigger#MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY
      */
     public CarbonAwareCronScheduleBuilder withMisfireHandlingInstructionIgnoreMisfires() {
@@ -171,25 +196,25 @@ public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareC
 
     /**
      * If the Trigger misfires, use the
-     * {@link CronTrigger#MISFIRE_INSTRUCTION_DO_NOTHING} instruction.
+     * {@link CarbonAwareCronTrigger#MISFIRE_INSTRUCTION_DO_NOTHING} instruction.
      *
-     * @return the updated CronScheduleBuilder
-     * @see CronTrigger#MISFIRE_INSTRUCTION_DO_NOTHING
+     * @return the updated CarbonAwareCronScheduleBuilder
+     * @see CarbonAwareCronTrigger#MISFIRE_INSTRUCTION_DO_NOTHING
      */
     public CarbonAwareCronScheduleBuilder withMisfireHandlingInstructionDoNothing() {
-        misfireInstruction = CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
+        misfireInstruction = CarbonAwareCronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
         return this;
     }
 
     /**
      * If the Trigger misfires, use the
-     * {@link CronTrigger#MISFIRE_INSTRUCTION_FIRE_ONCE_NOW} instruction.
+     * {@link CarbonAwareCronTrigger#MISFIRE_INSTRUCTION_FIRE_ONCE_NOW} instruction.
      *
-     * @return the updated CronScheduleBuilder
-     * @see CronTrigger#MISFIRE_INSTRUCTION_FIRE_ONCE_NOW
+     * @return the updated CarbonAwareCronScheduleBuilder
+     * @see CarbonAwareCronTrigger#MISFIRE_INSTRUCTION_FIRE_ONCE_NOW
      */
     public CarbonAwareCronScheduleBuilder withMisfireHandlingInstructionFireAndProceed() {
-        misfireInstruction = CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW;
+        misfireInstruction = CarbonAwareCronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW;
         return this;
     }
 }

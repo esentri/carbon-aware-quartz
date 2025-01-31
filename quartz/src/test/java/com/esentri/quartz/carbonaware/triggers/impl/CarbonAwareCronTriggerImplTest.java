@@ -1,8 +1,6 @@
 package com.esentri.quartz.carbonaware.triggers.impl;
 
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
-import com.esentri.quartz.carbonaware.entity.EmissionData;
-import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 import com.esentri.quartz.carbonaware.testsupport.EmissionDataImpl;
 import com.esentri.quartz.carbonaware.testsupport.EmissionForecastImpl;
 import com.esentri.quartz.carbonaware.triggers.states.CarbonAwareExecutionState;
@@ -28,9 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CarbonAwareCronTriggerImplTest {
@@ -283,7 +279,7 @@ class CarbonAwareCronTriggerImplTest {
     }
 
     @Test
-     void shouldReturnStartDateFromFirstOptimalExecutionPoint_WhenStateIsReady_AndReturnedCarbonForecastIsPresent() {
+     void shouldReturnStartDateFromOptimalExecutionPoint_withMinimalCarbonIntensityValue_WhenStateIsReady_AndReturnedCarbonForecastIsPresent() {
         Date startDate = calendar.getTime();
         LocalDateTime optimalExecutionDate = LocalDateTime.ofInstant(startDate.toInstant().plus(5, ChronoUnit.SECONDS), ZoneId.systemDefault());
 
@@ -298,7 +294,7 @@ class CarbonAwareCronTriggerImplTest {
 
         Date result = sut.getFireTimeAfter(startDate);
 
-        assertThat(result.toInstant()).isEqualTo(optimalExecutionDate.toInstant(ZONE_OFFSET));
+        assertThat(result.toInstant()).isEqualTo(optimalExecutionDate.plusSeconds(2).toInstant(ZONE_OFFSET));
     }
 
 }

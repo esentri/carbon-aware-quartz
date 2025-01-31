@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 esentri AG
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for details.
+ */
 package com.esentri.quartz.carbonaware.util;
 
 import com.esentri.quartz.carbonaware.entity.EmissionData;

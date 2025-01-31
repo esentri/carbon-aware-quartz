@@ -1,3 +1,21 @@
+/*
+ * Portions of this file are based on the Quartz Scheduler project,
+ * Copyright (c) Terracotta, Inc. Licensed under the Apache License, Version 2.0.
+ *
+ * Modifications and extensions Copyright (c) 2025 esentri AG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.esentri.quartz.carbonaware.triggers.impl;
 
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
@@ -20,26 +38,25 @@ import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.*;
 
-
 /**
  * <p>
  * A concrete <code>{@link Trigger}</code> that is used to fire a <code>{@link org.quartz.JobDetail}</code>
  * at given moments in time, defined with Unix 'cron-like' definitions.
  * </p>
  *
- * @author jannisschalk
+ * <p>
+ * Custom implementation inspired by Quartz's {@link org.quartz.impl.triggers.CronTriggerImpl}.
+ * This class introduces additional functionality while maintaining
+ * compatibility with existing Quartz scheduling mechanisms.
+ * <br>
+ * Based on Quartz Scheduler (Copyright (c) Terracotta, Inc.)
+ * Licensed under Apache License 2.0.
+ * </p>
+ *
+ * @author Terracotta, Inc.
+ * @author jannisschalk, esentri AG (modifications & extensions)
  */
 public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronTrigger> implements CarbonAwareCronTrigger, CoreTrigger {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CarbonAwareCronTriggerImpl.class);
-
-    /*
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *
-     * Constants.
-     *
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
 
     /**
      * Required for serialization support. Introduced in Quartz 1.6.1 to
@@ -50,17 +67,8 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
      */
     @Serial
     private static final long serialVersionUID = 1L;
-
-    protected static final int YEAR_TO_GIVEUP_SCHEDULING_AT = CronExpression.MAX_YEAR;
-
-
-    /*
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *
-     * Data members.
-     *
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(CarbonAwareCronTriggerImpl.class);
+    private static final int YEAR_TO_GIVEUP_SCHEDULING_AT = CronExpression.MAX_YEAR;
 
     private CronExpression cronEx = null;
     private Date startTime = null;
@@ -78,36 +86,16 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     private Date configuredExecutionTime;
     private String carbonForecastLocation = "";
     private EmissionData currentForecast;
-    /*
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *
-     * Constructors.
-     *
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
 
     /**
      * <p>
-     * Create a <code>CronTrigger</code> with no settings.
-     * </p>
-     *
-     * <p>
-     * The start-time will also be set to the current time, and the time zone
-     * will be set the the system's default time zone.
+     * Create a plain CarbonAwareCronTriggerImpl, with a start time
      * </p>
      */
     public CarbonAwareCronTriggerImpl() {
         super();
         setStartTime(new Date());
     }
-
-    /*
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *
-     * Interface.
-     *
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
 
     @Override
     public Object clone() {
@@ -128,9 +116,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
         this.cronEx.setTimeZone(origTz);
     }
 
-    /* (non-Javadoc)
-     * @see org.quartz.CronTriggerI#getCronExpression()
-     */
+    @Override
     public String getCronExpression() {
         return cronEx == null ? null : cronEx.getCronExpression();
     }
@@ -146,7 +132,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
     /**
      * <p>
-     * Get the time at which the <code>CronTrigger</code> should occur.
+     * Get the time at which the <code>CarbonAwareCronTriggerImpl</code> should start.
      * </p>
      */
     @Override
@@ -165,11 +151,6 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
             throw new IllegalArgumentException(
                     "End time cannot be before start time");
         }
-
-        // round off millisecond...
-        // Note timeZone is not needed here as parameter for
-        // Calendar.getInstance(),
-        // since time zone is implicit when using a Date in the setTime method.
         Calendar cl = Calendar.getInstance();
         cl.setTime(startTime);
         cl.set(Calendar.MILLISECOND, 0);
@@ -179,8 +160,8 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
     /**
      * <p>
-     * Get the time at which the <code>CronTrigger</code> should quit
-     * repeating - even if repeastCount isn't yet satisfied.
+     * Get the time at which the <code>CarbonAwareCronTriggerImpl</code> should quit
+     * repeating
      * </p>
      *
      * @see #getFinalFireTime()
@@ -239,6 +220,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
      * <b>This method should not be invoked by client code.</b>
      * </p>
      */
+    @Override
     public void setNextFireTime(Date nextFireTime) {
         this.nextFireTime = nextFireTime;
     }
@@ -252,13 +234,13 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
      * <b>This method should not be invoked by client code.</b>
      * </p>
      */
+    @Override
     public void setPreviousFireTime(Date previousFireTime) {
         this.previousFireTime = previousFireTime;
     }
 
-    /* (non-Javadoc)
-     * @see org.quartz.CronTriggerI#getTimeZone()
-     */
+
+    @Override
     public TimeZone getTimeZone() {
 
         if (cronEx != null) {
@@ -274,7 +256,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     /**
      * <p>
      * Sets the time zone for which the <code>cronExpression</code> of this
-     * <code>CronTrigger</code> will be resolved.
+     * <code>CarbonAwareCronTriggerImpl</code> will be resolved.
      * </p>
      *
      * <p>If {@link #setCronExpression(CronExpression)} is called after this
@@ -292,7 +274,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
     /**
      * <p>
-     * Returns the next time at which the <code>CronTrigger</code> will fire,
+     * Returns the next time at which the <code>CarbonAwareCronTriggerImpl</code> will fire,
      * after the given time. If the trigger will not fire after the given time,
      * <code>null</code> will be returned.
      * </p>
@@ -309,7 +291,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
         }
 
         if (getStartTime().after(afterTime)) {
-            afterTime = new Date(getStartTime().getTime() - 1000l);
+            afterTime = new Date(getStartTime().getTime() - 1000L);
         }
 
         if (getEndTime() != null && (afterTime.compareTo(getEndTime()) >= 0)) {
@@ -328,7 +310,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
         }
 
         if (carbonAwareExecutionState == CarbonAwareExecutionState.READY) {
-            LOGGER.info("--- Trigger is about to determine better execution time... ---");
+            LOGGER.info("--- {} is about to determine better execution time... ---", getName());
             List<EmissionForecast> emissionForecasts = fetchCurrentForecast(
                     carbonForecastLocation,
                     pot,
@@ -346,7 +328,9 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
                     .map(EmissionForecast::getOptimalDataPoints)
                     .filter(Objects::nonNull)
                     .flatMap(Collection::stream)
-                    .findFirst() //TODO: write a comparator to find the optimal data point with the lowest carbon intensity
+                    .filter(Objects::nonNull)
+                    .filter(data -> data.getValue() != null)
+                    .min(Comparator.comparingDouble(EmissionData::getValue))
                     .orElse(null);
 
             if(emissionData == null) {
@@ -362,7 +346,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
             this.optimalExecutionTime = convertToDate(emissionData.getTimestamp(), timeZone);
             this.carbonAwareExecutionState = CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME;
 
-            LOGGER.info("--- Trigger determined better execution time at {} ---", optimalExecutionTime);
+            LOGGER.info("--- {} determined better execution time at {} ---", getName(), optimalExecutionTime);
 
             return optimalExecutionTime;
         }
@@ -383,7 +367,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
         try{
             return carbonForecastApi.getEmissionForecastCurrent(List.of(location), startDate, endDate, durationInMinutes);
         } catch (Exception e) {
-            LOGGER.warn("Exception was thrown during getEmissionForecast: ", e);
+            LOGGER.warn("Exception was thrown during getEmissionForecast. Continue without emission forecast!: ", e);
             return List.of();
         }
     }
@@ -404,7 +388,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     /**
      * <p>
      * NOT YET IMPLEMENTED: Returns the final time at which the
-     * <code>CronTrigger</code> will fire.
+     * <code>CarbonAwareCronTrigger</code> will fire.
      * </p>
      *
      * <p>
@@ -416,7 +400,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     public Date getFinalFireTime() {
         Date resultTime;
         if (getEndTime() != null) {
-            resultTime = getTimeBefore(new Date(getEndTime().getTime() + 1000l));
+            resultTime = getTimeBefore(new Date(getEndTime().getTime() + 1000L));
         } else {
             resultTime = (cronEx == null) ? null : cronEx.getFinalFireTime();
         }
@@ -430,7 +414,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
     /**
      * <p>
-     * Determines whether or not the <code>CronTrigger</code> will occur
+     * Determines whether or not the <code>CarbonAwareCronTriggerImpl</code> will start
      * again.
      * </p>
      */
@@ -446,8 +430,8 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
     /**
      * <p>
-     * Updates the <code>CronTrigger</code>'s state based on the
-     * MISFIRE_INSTRUCTION_XXX that was selected when the <code>CronTrigger</code>
+     * Updates the <code>CarbonAwareCronTriggerImpl</code>'s state based on the
+     * MISFIRE_INSTRUCTION_XXX that was selected when the <code>CarbonAwareCronTriggerImpl</code>
      * was created.
      * </p>
      *
@@ -556,7 +540,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
      */
     @Override
     public Date computeFirstFireTime(org.quartz.Calendar calendar) {
-        nextFireTime = getFireTimeAfter(new Date(getStartTime().getTime() - 1000l));
+        nextFireTime = getFireTimeAfter(new Date(getStartTime().getTime() - 1000L));
 
         while (nextFireTime != null && calendar != null
                 && !calendar.isTimeIncluded(nextFireTime.getTime())) {
@@ -566,19 +550,18 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
         return nextFireTime;
     }
 
-    /* (non-Javadoc)
-     * @see org.quartz.CronTriggerI#getExpressionSummary()
-     */
+    @Override
     public String getExpressionSummary() {
         return cronEx == null ? null : cronEx.getExpressionSummary();
     }
 
 
     /**
-     * Used by extensions of CronTrigger to imply that there are additional
+     * Used by extensions of CarbonAwareCronTrigger to imply that there are additional
      * properties, specifically so that extensions can choose whether to be
-     * stored as a serialized blob, or as a flattened CronTrigger table.
+     * stored as a serialized blob, or as a flattened CarbonAwareCronTrigger table.
      */
+    @Override
     public boolean hasAdditionalProperties() {
         return false;
     }
@@ -627,7 +610,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
     /**
      * NOT YET IMPLEMENTED: Returns the time before the given time
-     * that this <code>CronTrigger</code> will fire.
+     * that this <code>CarbonAwareCronTrigger</code> will fire.
      */
     protected Date getTimeBefore(Date eTime) {
         return (cronEx == null) ? null : cronEx.getTimeBefore(eTime);
