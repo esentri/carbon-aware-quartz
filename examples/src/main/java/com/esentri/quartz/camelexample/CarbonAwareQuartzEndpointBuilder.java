@@ -1,8 +1,8 @@
 package com.esentri.quartz.camelexample;
 
-import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.quartz;
-
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory;
 import org.apache.camel.component.quartz.QuartzEndpoint;
@@ -11,6 +11,9 @@ import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.quartz;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CarbonAwareQuartzEndpointBuilder {
 
   public static QuartzEndpoint build(CarbonAwareCronTrigger trigger, CamelContext context) {

@@ -6,6 +6,7 @@
 package com.esentri.quartz.carbonaware.clients.opendata;
 
 import com.esentri.quartz.carbonaware.clients.opendata.model.CachedForecast;
+import com.esentri.quartz.carbonaware.clients.opendata.model.Location;
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
@@ -53,7 +54,9 @@ public class OpenDataForecastClient implements CarbonForecastApi {
             Integer windowSize) {
         var result = new ArrayList<EmissionForecast>();
 
-        for (String location : locations) {
+        for (String locationCode : locations) {
+            Location location = Location.fromCode(locationCode);
+
             CachedForecast forecast = EnergyChartsForecastProvider.getForecast(location);
             rejectInvalidForecastData(dataStartAt, location, forecast);
 
@@ -68,7 +71,7 @@ public class OpenDataForecastClient implements CarbonForecastApi {
                     forecast.emissionData().get(0).duration(), //all durations are equal
                     emissionDataRage)
 
-                    .orElseThrow(() -> new NoForecastException(MSG_NO_FORECAST_AVAILABLE.formatted(location)));
+                    .orElseThrow(() -> new NoForecastException(MSG_NO_FORECAST_AVAILABLE.formatted(location.getDisplayName())));
 
 
             EmissionForecast emissionForecast = buildEmissionForcastObject(dataStartAt, windowSize, location, optimalEmissionData);
@@ -79,12 +82,12 @@ public class OpenDataForecastClient implements CarbonForecastApi {
     }
 
     private static void rejectInvalidForecastData(LocalDateTime dataStartAt,
-                                                  String location,
+                                                  Location location,
                                                   CachedForecast forecast) {
         if (forecast == null
                 || forecast.emissionData() == null
                 || forecast.emissionData().isEmpty()) {
-            throw new NoForecastException(MSG_NO_FORECAST_AVAILABLE.formatted(location));
+            throw new NoForecastException(MSG_NO_FORECAST_AVAILABLE.formatted(location.getDisplayName()));
         }
         //check start date boundaries
         if (forecast.maximumForecastTimestamp().isBefore(dataStartAt)) {
@@ -131,18 +134,18 @@ public class OpenDataForecastClient implements CarbonForecastApi {
     private static EmissionForecast buildEmissionForcastObject(
             LocalDateTime dataStartAt,
             Integer windowSize,
-            String location,
+            Location location,
             EmissionData optimalEmissionData) {
         // If the current time window is optimal. Execute immediately. Else, use forecasted timestamp
         if (optimalEmissionData.timestamp().isBefore(dataStartAt)) {
             return new EmissionForecastImpl(
-                    location,
+                    location.getCode(),
                     windowSize,
                     List.of(new EmissionDataImpl(LocalDateTime.now().plusMinutes(1), optimalEmissionData.value()))
             );
         } else {
             return new EmissionForecastImpl(
-                    location,
+                    location.getCode(),
                     windowSize,
                     List.of(optimalEmissionData));
         }

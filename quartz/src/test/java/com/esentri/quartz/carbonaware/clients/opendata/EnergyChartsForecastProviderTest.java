@@ -1,6 +1,7 @@
 package com.esentri.quartz.carbonaware.clients.opendata;
 
 import com.esentri.quartz.carbonaware.clients.opendata.model.CachedForecast;
+import com.esentri.quartz.carbonaware.clients.opendata.model.Location;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
@@ -61,10 +62,10 @@ class EnergyChartsForecastProviderTest {
                 LocalDateTime.now().plusHours(24),
                 Collections.emptyList()
         );
-        EnergyChartsForecastProvider.cachedForecasts.put("de", mockForecast);
+        EnergyChartsForecastProvider.cachedForecasts.put(Location.DE, mockForecast);
 
         // When
-        CachedForecast result = EnergyChartsForecastProvider.getForecast("de");
+        CachedForecast result = EnergyChartsForecastProvider.getForecast(Location.DE);
 
         // Then
         assertEquals(mockForecast, result);
@@ -73,7 +74,7 @@ class EnergyChartsForecastProviderTest {
     @Test
     void getForecast_shouldReturnNull_whenLocationNotCached() {
         // When
-        CachedForecast result = EnergyChartsForecastProvider.getForecast("nonexistent");
+        CachedForecast result = EnergyChartsForecastProvider.getForecast(Location.ALL);
 
         // Then
         assertNull(result);
@@ -107,7 +108,7 @@ class EnergyChartsForecastProviderTest {
 
         // Then
         assertTrue(EnergyChartsForecastProvider.initialized);
-        assertEquals(locations, EnergyChartsForecastProvider.locations);
+        assertEquals(Arrays.asList(Location.DE, Location.FR), EnergyChartsForecastProvider.locations);
         
         // Verify that the API URL template is set correctly
         assertEquals("http://localhost:8089/co2eq?country=%s", EnergyChartsForecastProvider.apiUrlTemplate);
@@ -115,15 +116,16 @@ class EnergyChartsForecastProviderTest {
         // Verify that the cache contains entries for the locations
         // Note: We're not verifying the actual HTTP requests because that's implementation-dependent
         // Instead, we're verifying that the provider is correctly initialized
-        assertNotNull(EnergyChartsForecastProvider.cachedForecasts.get("de"));
-        assertNotNull(EnergyChartsForecastProvider.cachedForecasts.get("fr"));
+        assertNotNull(EnergyChartsForecastProvider.cachedForecasts.get(Location.DE));
+        assertNotNull(EnergyChartsForecastProvider.cachedForecasts.get(Location.FR));
     }
 
     @Test
     void initialize_shouldNotReinitialize_whenAlreadyInitialized() {
         // Given
-        List<String> initialLocations = Arrays.asList("de", "fr");
+        List<Location> initialLocations = Arrays.asList(Location.DE, Location.FR);
         List<String> newLocations = Arrays.asList("es", "it");
+
         EnergyChartsForecastProvider.locations = initialLocations;
         EnergyChartsForecastProvider.initialized = true;
 
@@ -160,8 +162,7 @@ class EnergyChartsForecastProviderTest {
     @Test
     void updateCachedData_shouldUpdateCache() {
         // Given
-        List<String> testLocations = Arrays.asList("de", "fr");
-        EnergyChartsForecastProvider.locations = testLocations;
+        EnergyChartsForecastProvider.locations = Arrays.asList(Location.DE, Location.FR);
 
         // Set up WireMock stubs for each location
         String mockResponseDe = "{\"unix_seconds\":[1626432000,1626435600],\"co2eq\":[300.5,290.2],\"co2eq_forecast\":[null,null]}";
@@ -185,8 +186,8 @@ class EnergyChartsForecastProviderTest {
         EnergyChartsForecastProvider.updateCachedData();
 
         // Then
-        assertNotNull(EnergyChartsForecastProvider.getForecast("de"));
-        assertNotNull(EnergyChartsForecastProvider.getForecast("fr"));
+        assertNotNull(EnergyChartsForecastProvider.getForecast(Location.DE));
+        assertNotNull(EnergyChartsForecastProvider.getForecast(Location.FR));
 
         // Verify that the requests were made
         verify(getRequestedFor(urlEqualTo("/co2eq?country=de"))
@@ -200,13 +201,13 @@ class EnergyChartsForecastProviderTest {
         // Given
         String invalidJson = "{invalid json}";
 
-        // Use reflection to access private method
-        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, String.class);
+        // Use reflection to access a private method
+        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, Location.class);
         parseMethod.setAccessible(true);
 
         // When
         @SuppressWarnings("unchecked")
-        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, invalidJson, "de");
+        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, invalidJson, Location.DE);
 
         // Then
         assertTrue(result.isEmpty());
@@ -217,13 +218,13 @@ class EnergyChartsForecastProviderTest {
         // Given
         String emptyArraysJson = "{\"unix_seconds\":[],\"co2eq\":[],\"co2eq_forecast\":[]}";
 
-        // Use reflection to access private method
-        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, String.class);
+        // Use reflection to access a private method
+        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, Location.class);
         parseMethod.setAccessible(true);
 
         // When
         @SuppressWarnings("unchecked")
-        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, emptyArraysJson, "de");
+        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, emptyArraysJson, Location.DE);
 
         // Then
         assertTrue(result.isEmpty());
@@ -234,13 +235,13 @@ class EnergyChartsForecastProviderTest {
         // Given
         String differentSizesJson = "{\"unix_seconds\":[1626432000,1626435600],\"co2eq\":[300.5],\"co2eq_forecast\":[null,null]}";
 
-        // Use reflection to access private method
-        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, String.class);
+        // Use reflection to access a private method
+        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, Location.class);
         parseMethod.setAccessible(true);
 
         // When
         @SuppressWarnings("unchecked")
-        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, differentSizesJson, "de");
+        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, differentSizesJson, Location.DE);
 
         // Then
         assertTrue(result.isEmpty());
@@ -251,7 +252,7 @@ class EnergyChartsForecastProviderTest {
         // Given
         String json = "{\"unix_seconds\":[1626432000,1626435600,null,\"invalid\"]}";
 
-        // Use reflection to access private method
+        // Use reflection to access a private method
         Method extractMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("extractLongArrayFromJson", String.class);
         extractMethod.setAccessible(true);
 
@@ -270,7 +271,7 @@ class EnergyChartsForecastProviderTest {
         // Given
         String json = "{\"co2eq\":[300.5,290.2,null,\"invalid\"]}";
 
-        // Use reflection to access private method
+        // Use reflection to access a private method
         Method extractMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("extractDoubleArrayFromJson", String.class, String.class);
         extractMethod.setAccessible(true);
 
@@ -293,7 +294,7 @@ class EnergyChartsForecastProviderTest {
         List<Double> co2eqValues = Arrays.asList(300.5, 290.2, 280.0);
         List<Double> co2eqForecastValues = Arrays.asList(null, null, null);
 
-        // Use reflection to access private method
+        // Use reflection to access a private method
         Method buildMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("buildEmissionDataRecords", List.class, List.class, List.class);
         buildMethod.setAccessible(true);
 
@@ -303,7 +304,7 @@ class EnergyChartsForecastProviderTest {
 
         // Then
         assertEquals(3, result.size());
-        // Check first data point
+        // Check the first data point
         assertEquals(300.5, result.get(0).value());
         // Check duration calculation
         assertEquals(60, result.get(0).duration()); // 3600 seconds = 60 minutes
@@ -316,7 +317,7 @@ class EnergyChartsForecastProviderTest {
         List<Double> co2eqValues = Arrays.asList(null, null);
         List<Double> co2eqForecastValues = Arrays.asList(300.5, 290.2);
 
-        // Use reflection to access private method
+        // Use reflection to access a private method
         Method buildMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("buildEmissionDataRecords", List.class, List.class, List.class);
         buildMethod.setAccessible(true);
 
@@ -344,12 +345,12 @@ class EnergyChartsForecastProviderTest {
         // Set the apiUrlTemplate to point to the WireMock server
         EnergyChartsForecastProvider.apiUrlTemplate = "http://localhost:8089/co2eq?country=%s";
 
-        // Use reflection to access private method
-        Method fetchMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("fetchDataFromApi", String.class);
+        // Use reflection to access a private method
+        Method fetchMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("fetchDataFromApi", Location.class);
         fetchMethod.setAccessible(true);
 
         // When
-        String result = (String) fetchMethod.invoke(null, "de");
+        String result = (String) fetchMethod.invoke(null, Location.DE);
 
         // Then
         assertEquals(mockResponse, result);
@@ -371,17 +372,17 @@ class EnergyChartsForecastProviderTest {
         // Set the apiUrlTemplate to point to the WireMock server
         EnergyChartsForecastProvider.apiUrlTemplate = "http://localhost:8089/co2eq?country=%s";
 
-        // Use reflection to access private method
-        Method fetchMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("fetchDataFromApi", String.class);
+        // Use reflection to access a private method
+        Method fetchMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("fetchDataFromApi", Location.class);
         fetchMethod.setAccessible(true);
 
         // When & Then
         try {
-            fetchMethod.invoke(null, "fr");
+            fetchMethod.invoke(null, Location.FR);
             fail("Expected an InvocationTargetException to be thrown");
         } catch (InvocationTargetException e) {
             // When using reflection, exceptions thrown by the method are wrapped in InvocationTargetException
-            assertTrue(e.getCause() instanceof IOException, "Expected cause to be IOException, but was " + e.getCause().getClass().getName());
+            assertInstanceOf(IOException.class, e.getCause(), "Expected cause to be IOException, but was " + e.getCause().getClass().getName());
             assertEquals("HTTP-Fehler: 404", e.getCause().getMessage());
         }
 
@@ -393,8 +394,7 @@ class EnergyChartsForecastProviderTest {
     @Test
     void updateCachedData_shouldThrowIllegalStateException_whenIOExceptionOccurs() {
         // Given
-        List<String> testLocations = Arrays.asList("de");
-        EnergyChartsForecastProvider.locations = testLocations;
+        EnergyChartsForecastProvider.locations = List.of(Location.DE);
 
         // Set up WireMock to return a connection error
         stubFor(get(urlEqualTo("/co2eq?country=de"))
@@ -421,13 +421,13 @@ class EnergyChartsForecastProviderTest {
         // Create a JSON where all values are null, which will result in empty dataPoints
         String jsonWithNullValues = "{\"unix_seconds\":[1626432000,1626435600],\"co2eq\":[null,null],\"co2eq_forecast\":[null,null]}";
 
-        // Use reflection to access private method
-        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, String.class);
+        // Use reflection to access a private method
+        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, Location.class);
         parseMethod.setAccessible(true);
 
         // When
         @SuppressWarnings("unchecked")
-        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, jsonWithNullValues, "de");
+        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, jsonWithNullValues, Location.DE);
 
         // Then
         assertTrue(result.isEmpty());
@@ -441,13 +441,13 @@ class EnergyChartsForecastProviderTest {
         // for the last element (when calculating duration)
         String jsonWithSingleTimestamp = "{\"unix_seconds\":[1626432000],\"co2eq\":[300.5],\"co2eq_forecast\":[400.5]}";
 
-        // Use reflection to access private method
-        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, String.class);
+        // Use reflection to access a private method
+        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, Location.class);
         parseMethod.setAccessible(true);
 
         // When
         @SuppressWarnings("unchecked")
-        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, jsonWithSingleTimestamp, "de");
+        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, jsonWithSingleTimestamp, Location.DE);
 
         // Then
         assertTrue(result.isEmpty());
@@ -460,13 +460,13 @@ class EnergyChartsForecastProviderTest {
         // This specifically targets the co2eqValues.isEmpty() branch
         String jsonWithEmptyCo2eq = "{\"unix_seconds\":[1626432000,1626435600],\"co2eq\":[],\"co2eq_forecast\":[null,null]}";
 
-        // Use reflection to access private method
-        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, String.class);
+        // Use reflection to access a private method
+        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, Location.class);
         parseMethod.setAccessible(true);
 
         // When
         @SuppressWarnings("unchecked")
-        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, jsonWithEmptyCo2eq, "de");
+        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, jsonWithEmptyCo2eq, Location.DE);
 
         // Then
         assertTrue(result.isEmpty());
@@ -479,13 +479,13 @@ class EnergyChartsForecastProviderTest {
         // This specifically targets the co2eqForecastValues.isEmpty() branch
         String jsonWithEmptyCo2eqForecast = "{\"unix_seconds\":[1626432000,1626435600],\"co2eq\":[300.5,290.2],\"co2eq_forecast\":[]}";
 
-        // Use reflection to access private method
-        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, String.class);
+        // Use reflection to access a private method
+        Method parseMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("parseJsonToEmissionForecast", String.class, Location.class);
         parseMethod.setAccessible(true);
 
         // When
         @SuppressWarnings("unchecked")
-        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, jsonWithEmptyCo2eqForecast, "de");
+        List<CachedForecast.CachedEmissionData> result = (List<CachedForecast.CachedEmissionData>) parseMethod.invoke(null, jsonWithEmptyCo2eqForecast, Location.DE);
 
         // Then
         assertTrue(result.isEmpty());
@@ -498,7 +498,7 @@ class EnergyChartsForecastProviderTest {
         List<Double> co2eqValues = Arrays.asList(null, null);
         List<Double> co2eqForecastValues = Arrays.asList(null, null);
 
-        // Use reflection to access private method
+        // Use reflection to access a private method
         Method buildMethod = EnergyChartsForecastProvider.class.getDeclaredMethod("buildEmissionDataRecords", List.class, List.class, List.class);
         buildMethod.setAccessible(true);
 

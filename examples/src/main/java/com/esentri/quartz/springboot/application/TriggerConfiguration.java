@@ -47,7 +47,7 @@ public class TriggerConfiguration {
                 .withIdentity("CarbonAwareTrigger-WithOpenDataClient", GROUP_NAME)
                 .forJob(job)
                 .withSchedule(CarbonAwareCronScheduleBuilder.cronSchedule("0 0/1 * ? * * *")
-                        .withJobDurationInMinutes(49)
+                        .withJobDurationInMinutes(7)
                         .withDeadlineCronExpression("0 0 23 ? * * *")
                         .withLocation("de")
                         .useDefaultOpenDataForcastApiClient())
@@ -60,7 +60,7 @@ public class TriggerConfiguration {
             havingValue = "false")
     public JobDetail secondJob() {
         return JobBuilder.newJob().ofType(AnotherLoggingJob.class)
-//                .storeDurably()
+                .storeDurably()
                 .withIdentity("CustomForecastClient-LoggingJob", GROUP_NAME)
                 .withDescription("Invoke Simple logging Job with forecast from custom implemented ForecastApi")
                 .build();

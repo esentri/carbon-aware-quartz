@@ -6,6 +6,7 @@
 package com.esentri.quartz.carbonaware.clients.opendata;
 
 import com.esentri.quartz.carbonaware.clients.opendata.model.CachedForecast;
+import com.esentri.quartz.carbonaware.clients.opendata.model.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 /**
@@ -47,7 +49,7 @@ public class EnergyChartsForecastProvider implements Serializable {
      * Access level is "package private" for a better Unit-Test experience
      * Shouldn't be accessed or modified from outside of this class!
      * */
-    static final Map<String, CachedForecast> cachedForecasts = new HashMap<>();
+    static final Map<Location, CachedForecast> cachedForecasts = new EnumMap<>(Location.class);
     /**
      * Access level is "package private" for a better Unit-Test experience
      * Shouldn't be accessed or modified from outside of this class!
@@ -57,7 +59,7 @@ public class EnergyChartsForecastProvider implements Serializable {
      * Access level is "package private" for a better Unit-Test experience
      * Shouldn't be accessed or modified from outside of this class!
      * */
-    static List<String> locations = new ArrayList<>();
+    static List<Location> locations = new ArrayList<>();
     /**
      * Access level is "package private" for a better Unit-Test experience
      * Shouldn't be accessed or modified from outside of this class!
@@ -74,7 +76,7 @@ public class EnergyChartsForecastProvider implements Serializable {
      * @param location The location identifier for which to retrieve the forecast
      * @return The cached forecast data for the specified location, or null if not found
      */
-    public static CachedForecast getForecast(String location) {
+    public static CachedForecast getForecast(Location location) {
         return cachedForecasts.get(location);
     }
 
@@ -90,7 +92,7 @@ public class EnergyChartsForecastProvider implements Serializable {
             LOGGER.warn("EnergyChartsForecastProvider is already initialized.");
             return;
         }
-        locations = Collections.unmodifiableList(locationsList);
+        locations = locationsList.stream().map(Location::fromCode).toList();
         
         // Only set the apiUrlTemplate if it hasn't been explicitly set already
         // This allows tests to set a custom URL before initialization
@@ -102,7 +104,9 @@ public class EnergyChartsForecastProvider implements Serializable {
         initialized = true;
 
         LOGGER.info("EnergyChartsForecastProvider initialized with locations: {}",
-                locations.isEmpty() ? "" : String.join(", ", locations));
+                locations.isEmpty()
+                        ? ""
+                        : locations.stream().map(Location::getDisplayName).collect(Collectors.joining(", ")));
     }
 
     /**
@@ -113,11 +117,10 @@ public class EnergyChartsForecastProvider implements Serializable {
      * @throws IllegalStateException if there is an error, fetching or processing the data
      */
     static void updateCachedData() {
-        for (String location : locations) {
-            String jsonData = null;
+        for (Location location : locations) {
             try {
                 // Make the HTTP request for each location
-                jsonData = fetchDataFromApi(location);
+                String jsonData = fetchDataFromApi(location);
                 
                 // Parse the JSON data
                 List<CachedForecast.CachedEmissionData> cachedEmissionData = parseJsonToEmissionForecast(jsonData, location);
@@ -153,8 +156,8 @@ public class EnergyChartsForecastProvider implements Serializable {
      * @return The raw JSON response from the API
      * @throws IOException if there is an error connecting to or reading from the API
      */
-    private static String fetchDataFromApi(String location) throws IOException {
-        URL url = new URL(apiUrlTemplate.formatted(location));
+    private static String fetchDataFromApi(Location location) throws IOException {
+        URL url = new URL(apiUrlTemplate.formatted(location.getCode()));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/json");
@@ -184,7 +187,7 @@ public class EnergyChartsForecastProvider implements Serializable {
      * @return List of parsed emission data points, or empty list if parsing fails
      */
     private static List<CachedForecast.CachedEmissionData> parseJsonToEmissionForecast(String jsonData,
-                                                                                       String location) {
+                                                                                       Location location) {
         try {
             // Extracting arrays using regular expressions
             List<Long> timestamps = extractLongArrayFromJson(jsonData);

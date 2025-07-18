@@ -1,6 +1,7 @@
 package com.esentri.quartz.carbonaware.clients.opendata;
 
 import com.esentri.quartz.carbonaware.clients.opendata.model.CachedForecast;
+import com.esentri.quartz.carbonaware.clients.opendata.model.Location;
 import com.esentri.quartz.carbonaware.entity.EmissionData;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 import com.esentri.quartz.carbonaware.exceptions.NoForecastException;
@@ -28,7 +29,7 @@ class OpenDataForecastClientTest {
         EnergyChartsForecastProvider.initialized = true;
         //15-minute steps
         EnergyChartsForecastProvider.cachedForecasts.put(
-                "de",
+                Location.DE,
                 buildCachedForecast("2025-07-16T20:00",
                         buildCachedEmissionData("2025-07-16T09:00", 325.4, 15L),
                         buildCachedEmissionData("2025-07-16T09:15", 322.1, 15L),
@@ -80,7 +81,7 @@ class OpenDataForecastClientTest {
 
         // For testing the case where all data points have the same value (to test optimalExecutionPoint null branch)
         EnergyChartsForecastProvider.cachedForecasts.put(
-                "same-values",
+                Location.ALL,
                 buildCachedForecast("2025-07-16T13:00",
                         buildCachedEmissionData("2025-07-16T10:00", 100.0, 15L),
                         buildCachedEmissionData("2025-07-16T10:15", 100.0, 15L),
@@ -94,7 +95,7 @@ class OpenDataForecastClientTest {
                 ));
         //60-minute steps
         EnergyChartsForecastProvider.cachedForecasts.put(
-                "ch",
+                Location.CH,
                 buildCachedForecast("2025-07-16T20:00",
                         buildCachedEmissionData("2025-07-16T09:00", 28.5, 60L),
                         buildCachedEmissionData("2025-07-16T10:00", 29.7, 60L),
@@ -111,19 +112,19 @@ class OpenDataForecastClientTest {
                 ));
         //too fewer entries for 4-hour job duration
         EnergyChartsForecastProvider.cachedForecasts.put(
-                "at",
+                Location.AT,
                 buildCachedForecast("2025-07-16T11:00",
                         buildCachedEmissionData("2025-07-16T09:00", 28.5, 60L),
                         buildCachedEmissionData("2025-07-16T10:00", 29.7, 60L),
                         buildCachedEmissionData("2025-07-16T11:00", 29.7, 60L)
                 ));
         //the forecast is null
-        EnergyChartsForecastProvider.cachedForecasts.put("fr", null);
+        EnergyChartsForecastProvider.cachedForecasts.put(Location.FR, null);
         //the forecast is empty
-        EnergyChartsForecastProvider.cachedForecasts.put("nl", buildCachedForecast("2025-07-16T09:00"));
+        EnergyChartsForecastProvider.cachedForecasts.put(Location.NL, buildCachedForecast("2025-07-16T09:00"));
 
         // For testing when forecast.emissionData() is null
-        EnergyChartsForecastProvider.cachedForecasts.put("be", new CachedForecast(
+        EnergyChartsForecastProvider.cachedForecasts.put(Location.BE, new CachedForecast(
                 LocalDateTime.of(2025, 7, 16, 9, 0, 0),
                 LocalDateTime.of(2025, 7, 16, 20, 0, 0),
                 null
@@ -133,7 +134,7 @@ class OpenDataForecastClientTest {
         // We need to ensure the minimum value is in a data point with timestamp before the start time
         // but still included in the filtered data (after dataStartAt.minusMinutes(data.duration()))
         EnergyChartsForecastProvider.cachedForecasts.put(
-                "uk",
+                Location.UK,
                 buildCachedForecast("2025-07-16T20:00",
                         // Add data points with timestamps before the start time (09:00)
                         buildCachedEmissionData("2025-07-16T08:00", 50.0, 15L),
@@ -152,7 +153,7 @@ class OpenDataForecastClientTest {
 
         // Exactly 4 data points for testing exact window size match (no sliding window)
         EnergyChartsForecastProvider.cachedForecasts.put(
-                "es",
+                Location.ES,
                 buildCachedForecast("2025-07-16T13:00",
                         buildCachedEmissionData("2025-07-16T10:00", 100.0, 15L),
                         buildCachedEmissionData("2025-07-16T10:15", 110.0, 15L),
@@ -162,7 +163,7 @@ class OpenDataForecastClientTest {
 
         // For testing when the sliding window doesn't find a better minimum
         EnergyChartsForecastProvider.cachedForecasts.put(
-                "it",
+                Location.IT,
                 buildCachedForecast("2025-07-16T13:00",
                         buildCachedEmissionData("2025-07-16T10:00", 100.0, 15L),
                         buildCachedEmissionData("2025-07-16T10:15", 110.0, 15L),
@@ -174,7 +175,7 @@ class OpenDataForecastClientTest {
 
         // For testing empty emission data range with findAbsoluteMinimumCarbonIntensity
         EnergyChartsForecastProvider.cachedForecasts.put(
-                "pt",
+                Location.PT,
                 buildCachedForecast("2025-07-16T13:00",
                         buildCachedEmissionData("2025-07-16T12:00", 100.0, 15L),
                         buildCachedEmissionData("2025-07-16T12:15", 110.0, 15L),
@@ -281,7 +282,7 @@ class OpenDataForecastClientTest {
             NoForecastException exception = assertThrows(NoForecastException.class, () ->
                     sut.getEmissionForecastCurrent(List.of(location), startTime, endTime, windowSize));
 
-            assertEquals("No forecast available for location [%s]".formatted(location), exception.getMessage());
+            assertEquals("No forecast available for location [%s]".formatted(Location.fromCode(location).getDisplayName()), exception.getMessage());
         }
     }
 
@@ -335,12 +336,12 @@ class OpenDataForecastClientTest {
             assertThatThrownBy(() -> sut.getEmissionForecastCurrent(
                     List.of("at"), startTime, endTime, windowSize))
                     .isInstanceOf(NoForecastException.class)
-                    .hasMessage("No forecast available for location [at]");
+                    .hasMessage("No forecast available for location [Austria]");
         }
     }
 
     @Nested
-    class WhenMultipleLocationsProvided {
+    class WhenMultipleLocationProvided {
 
         @Test
         void shouldReturnForecastForEachLocation() {
@@ -368,7 +369,7 @@ class OpenDataForecastClientTest {
     }
 
     @Nested
-    class WhenEmptyLocationsList {
+    class WhenEmptyLocationList {
 
         @Test
         void shouldReturnEmptyResultForEmptyLocationsList() {
@@ -402,7 +403,7 @@ class OpenDataForecastClientTest {
             assertThatThrownBy(() -> sut.getEmissionForecastCurrent(
                     List.of("pt"), startTime, endTime, windowSize))
                     .isInstanceOf(NoForecastException.class)
-                    .hasMessage("No forecast available for location [pt]");
+                    .hasMessage("No forecast available for location [Portugal]");
         }
     }
 
@@ -472,14 +473,14 @@ class OpenDataForecastClientTest {
 
             // When
             List<EmissionForecast> result = sut.getEmissionForecastCurrent(
-                    List.of("same-values"), startTime, endTime, windowSize);
+                    List.of("all"), startTime, endTime, windowSize);
 
             // Then
             assertNotNull(result);
             assertEquals(1, result.size());
 
             EmissionForecast forecast = result.get(0);
-            assertEquals("same-values", forecast.location());
+            assertEquals("all", forecast.location());
             assertEquals(windowSize, forecast.windowSize());
 
             // Verify that we have a valid result

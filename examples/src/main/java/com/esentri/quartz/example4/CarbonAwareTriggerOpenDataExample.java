@@ -1,7 +1,7 @@
 package com.esentri.quartz.example4;
 
-import com.esentri.quartz.carbonaware.clients.opendata.OpenDataForecastClient;
 import com.esentri.quartz.carbonaware.clients.opendata.EnergyChartsForecastProvider;
+import com.esentri.quartz.carbonaware.clients.opendata.OpenDataForecastClient;
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleBuilder;
 import org.quartz.JobDetail;

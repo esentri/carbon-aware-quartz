@@ -14,6 +14,7 @@ However, some files include code from the [Quartz Scheduler](https://github.com/
 which is licensed under the **Apache License 2.0**.
 
 For details, see the [LICENSE](LICENSE) file.
+[quartz.properties](quartz/src/main/resources/quartz.properties)
 
 ## Carbon Awareness
 
@@ -44,13 +45,13 @@ at the execution timestamp.
 
 ### Installation
 
-As this project is an enhancement of the quartz-scheduler, the quartz dependency is required on projects classpath.
-Also, an implementation of Slf4J is required on projects classpath.
+As this project is an enhancement of the quartz-scheduler, the quartz dependency is required on the projects classpath.
+Also, an implementation of Slf4J is required on the projects classpath.
 ```groovy
 dependencies {
     implementation "org.quartz-scheduler:quartz:2.5.X"
     implementation "org.slf4j:slf4j-api:2.X.X"
-    implementation 'com.esentri.quartz:carbon-aware-quartz:1.0.0'
+    implementation 'com.esentri.quartz:carbon-aware-quartz:1.1.0'
 }
 ```
 
@@ -59,7 +60,7 @@ application properties.
 
 #### User Guide
 
-Quartz allows you by default register some plugins to enhance its default functionality.
+Quartz allows you by default to register some plugins to enhance its default functionality.
 A detailed Documentation about Plugins can be
 found [here](https://github.com/quartz-scheduler/quartz/blob/main/docs/configuration.adoc#configuration-of-plug-ins-add-functionality-to-your-scheduler)
 
@@ -74,12 +75,33 @@ Time.
 To enable Time-Shifting, a instance of `CarbonAwareCronTrigger` is required.
 
 The Trigger needs two "timestaps" (Cron-Patterns) and a Client, which delivers a Carbon-Intensity forecast.
-In the Example below the Trigger will fire at 10:00pm every day, and have to be finished at 4:00am at the next day.
+In the Example below the Trigger will fire at 10:00pm every day, and have to be finished at 4:00am on the next day.
 
-When the trigger fires at 10:00pm it fetches the carbon Forecast between 10:00pm and 04:00am. If there is a period of
-time,
-where the energy is greener (lets say 02:35am), the trigger will fire again at 02:35am to execute the Job.
+When the trigger fires at 10:00pm, it fetches the carbon Forecast between 10:00pm and 04:00am. If there is a period of
+time when the energy is greener (let's say 02:35am), the trigger will fire again at 02:35am to execute the Job.
 The actual execution (10:00pm) is canceled.
+
+The example below uses the default open-date API client, fetching data from the
+[Energy-Charts API](`https://api.energy-charts.info/`).
+
+```java
+JobDetail job = newJob(TimeShiftedJob.class)
+        .withIdentity("TimeShiftedJob", "carbon-aware")
+        .ofType(TimeShiftedJob.class)
+        .build();
+
+CarbonAwareCronTrigger carbonAwareTrigger = newTrigger()
+        .withIdentity("CarbonAwareTrigger", "carbon-aware")
+        .forJob("TimeShiftedJob", "carbon-aware")
+        .withSchedule(CarbonAwareCronScheduleBuilder.cronSchedule("0 0 22 ? * *")
+                .withJobDurationInMinutes(7)
+                .withDeadlineCronExpression("0 0 4 ? * *")
+                .withLocation("de")
+                .useDefaultOpenDataForcastApiClient())
+        .build();
+```
+
+This example uses a Custom implementation for forcasting.
 
 ```java
 JobDetail job = newJob(TimeShiftedJob.class)
@@ -101,7 +123,12 @@ CarbonAwareCronTrigger carbonAwareTrigger = newTrigger()
 ##### CarbonForecastApi
 
 To get the Carbon forecast the Interface `CarbonForecastApi` have to be implemented.
-This is a minimal Subset of Carbon Aware SDK, which is linked above
+This is a minimal Subset of Carbon Aware SDK, which is linked above.
+
+For simplicity use the
+`[OpenDataForecastClient.java](quartz/src/main/java/com/esentri/quartz/carbonaware/clients/opendata/OpenDataForecastClient.java)`.
+It will fetch and cache the forecast for the locations configured properties in `quartz.properties`. This reduces the
+rest calls made during the time-shifting operations.
 
 ##### Statistics
 
@@ -113,23 +140,28 @@ org.quartz.plugin.<NAME>.restClientImplementationClass=<implementation of com.es
 org.quartz.plugin.<NAME>.persistenceClientImplementationClass=<implementation of com.esentri.quartz.carbonaware.clients.persistence.PersistenceApi.cass>
 ```
 
-The `restClientImplementationClass` can be the same implementation of `CarbonForecastApi.class` as passed into the Trigger. 
-This is required to fetch the Carbon Intensity for initial timestamp and the re-scheduled timestamp.
+The `restClientImplementationClass` can be the same implementation of `CarbonForecastApi.class` as passed into the
+Trigger.
+This is required to fetch the Carbon Intensity for the initial timestamp and the re-scheduled timestamp.
 To store this information, a `persistenceClientImplementationClass` is required, which implements the `PersistenceApi.class` interface.
 
 #### Examples
 
 1. [Simple Time-Shifted job execution](./examples/src/main/java/com/esentri/quartz/example1/readme.md)
-2. [dry-run enabled](./examples/src/main/java/com/esentri/quartz/example2/readme.md)
-3. [statistics enabled](./examples/src/main/java/com/esentri/quartz/example2/readme.md)
-4. [Apache Camel](./examples/src/main/java/com/esentri/quartz/camelexample/readme.md)
-5. [SpringBoot](./examples/src/main/java/com/esentri/quartz/springboot/readme.md)
+2. [Dry-run enabled](./examples/src/main/java/com/esentri/quartz/example2/readme.md)
+3. [Statistics enabled](./examples/src/main/java/com/esentri/quartz/example3/readme.md)
+4. [Usage of default open-data restclient for forcasting](./examples/src/main/java/com/esentri/quartz/example4/readme.md)
+5. [Apache Camel](./examples/src/main/java/com/esentri/quartz/camelexample/readme.md)
+6. [SpringBoot](./examples/src/main/java/com/esentri/quartz/springboot/readme.md)
 
 #### Properties
 
-| property                                                        | type      | default | description                                                                                                                                                                                                      |
-|-----------------------------------------------------------------|-----------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `org.quartz.plugin.<NAME>.dryrun`                               | `boolean` | `false` | Enables the dryrun feature. The CarbonAwareCronTrigger will determine a better execution time, but the Job will **not** be re-scheduled. All statistics feature will also work in combination with this feature. |
-| `org.quartz.plugin.<NAME>.enableStatistics`                     | `boolean` | `false` | Enables the statisctis feature. To persist the information about the saved carbon intensity.                                                                                                                     |
-| `org.quartz.plugin.<NAME>.restClientImplementationClass`        | `Class`   | `null`  | The implementation class for the `CarbonForecastApi.class` used in statistics feature. Only required, `enableStatistics=true`. Implementation Class have to provide a default constructor, for instantiation.    |
-| `org.quartz.plugin.<NAME>.persistenceClientImplementationClass` | `Class`   | `null`  | The implementation class for the `PersistenceApi.class` used in statistics feature. Only required, `enableStatistics=true`. Implementation Class have to provide a default constructor, for instantiation.       |                                                                                                                                                                                                      |
+| property                                                        | type      | default | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|-----------------------------------------------------------------|-----------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `org.quartz.plugin.<NAME>.dryrun`                               | `boolean` | `false` | Enables the dryrun feature. The CarbonAwareCronTrigger will determine a better execution time, but the Job will **not** be re-scheduled. All statistics feature will also work in combination with this feature.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `org.quartz.plugin.<NAME>.enableStatistics`                     | `boolean` | `false` | Enables the statisctis feature. To persist the information about the saved carbon intensity.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `org.quartz.plugin.<NAME>.restClientImplementationClass`        | `Class`   | `null`  | The implementation class for the `CarbonForecastApi.class` used in statistics feature. Only required if, `enableStatistics=true`. Implementation Class have to provide a default constructor, for instantiation. For simplicity the `[OpenDataForecastClient.java](quartz/src/main/java/com/esentri/quartz/carbonaware/clients/opendata/OpenDataForecastClient.java)` class can be used. Therefore the `useOpenDataProvider` property has to be activated.                                                                                                                                                                                                                           |
+| `org.quartz.plugin.<NAME>.persistenceClientImplementationClass` | `Class`   | `null`  | The implementation class for the `PersistenceApi.class` used in statistics feature. Only required if, `enableStatistics=true`. Implementation Class have to provide a default constructor, for instantiation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                                                                                                                                                                                                      |
+| `org.quartz.plugin.<NAME>.useOpenDataProvider`                  | `boolean` | `true`  | Enables forecasting with Open-Data from the [Energy-Charts API](`https://api.energy-charts.info/`). If this is set to `true` a list of `openDataLocations` have to be provided. The data fetched from the api will be stored in a cache and will be automatically updated. Caching this data reduces the overall api calls and thus also the Carbon-Intensity of the application. Forecasts for the next day usually available round about 7pm. The period will then reach until the next day at 10pm. The update schedule for this data can be found in class [OpenDataUpdateJob.java](quartz/src/main/java/com/esentri/quartz/carbonaware/clients/opendata/OpenDataUpdateJob.java) |
+| `org.quartz.plugin.<NAME>.openDataLocations`                    | `String`  | `de`    | A string separated by commas like `de,at,ch`. This will fetch and cache the forecast for this 3 locations if the `useOpenDataProvider` property is set to true. A possible list of supported locations can be found in class [Location.java](quartz/src/main/java/com/esentri/quartz/carbonaware/clients/opendata/model/Location.java).                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                                                      |
+
