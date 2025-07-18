@@ -101,7 +101,7 @@ CarbonAwareCronTrigger carbonAwareTrigger = newTrigger()
         .build();
 ```
 
-This example uses a Custom implementation for forcasting.
+This example uses a custom implementation for forcasting.
 
 ```java
 JobDetail job = newJob(TimeShiftedJob.class)
