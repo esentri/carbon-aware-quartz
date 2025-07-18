@@ -1,8 +1,8 @@
 plugins {
     id "java-library"
     id "maven-publish"
-    id "com.jaredsburrows.license" version "0.9.8"
-    id "org.owasp.dependencycheck" version "9.2.0"
+    id "com.jaredsburrows.license" version "$gradleLicenseVersion"
+    id "org.owasp.dependencycheck" version "$owaspDependencycheckVersion"
 }
 
 repositories {
@@ -18,6 +18,7 @@ dependencies {
     testImplementation "org.assertj:assertj-core:$assertjVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+    testImplementation "org.wiremock:wiremock:$wiremockVersion"
 }
 
 jar {

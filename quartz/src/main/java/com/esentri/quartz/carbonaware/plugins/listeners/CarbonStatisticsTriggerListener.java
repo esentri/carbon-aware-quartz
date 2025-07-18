@@ -91,7 +91,7 @@ public class CarbonStatisticsTriggerListener extends TriggerListenerSupport {
                             carbonAwareTrigger.getOptimalExecutionTime().toInstant(),
                             jobDuration,
                             currentCarbonIntensity,
-                            carbonAwareTrigger.getEmissionData().getValue(),
+                            carbonAwareTrigger.getEmissionData().value(),
                             location,
                             dryRun));
         }
@@ -100,7 +100,7 @@ public class CarbonStatisticsTriggerListener extends TriggerListenerSupport {
     private static Double extractCurrentCarbonIntensity(List<EmissionForecast> currentEmissions, String location) {
         try {
             EmissionData emissionData = Functions.extractEmissionData(currentEmissions, location);
-            return emissionData.getValue();
+            return emissionData.value();
         } catch (ForecastUnavailableException e) {
             return null;
         }

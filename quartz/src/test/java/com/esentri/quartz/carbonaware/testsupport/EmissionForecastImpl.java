@@ -18,17 +18,17 @@ public class EmissionForecastImpl implements EmissionForecast {
     }
 
     @Override
-    public String getLocation() {
+    public String location() {
         return location;
     }
 
     @Override
-    public Integer getWindowSize() {
+    public Integer windowSize() {
         return windowSize;
     }
 
     @Override
-    public List<EmissionData> getOptimalDataPoints() {
+    public List<EmissionData> optimalDataPoints() {
         return emissionData;
     }
 }

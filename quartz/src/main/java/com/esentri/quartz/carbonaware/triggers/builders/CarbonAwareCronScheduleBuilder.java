@@ -19,6 +19,8 @@
 
 package com.esentri.quartz.carbonaware.triggers.builders;
 
+import com.esentri.quartz.carbonaware.clients.opendata.EnergyChartsForecastProvider;
+import com.esentri.quartz.carbonaware.clients.opendata.OpenDataForecastClient;
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.impl.CarbonAwareCronTriggerImpl;
@@ -121,6 +123,25 @@ public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareC
      * */
     public CarbonAwareCronScheduleBuilder withLocation(String location) {
         this.location = location;
+        return this;
+    }
+
+    /**
+     * Use Default {@link OpenDataForecastClient} as Rest-Client to determine the Forecast.
+     * Therefor the {@link EnergyChartsForecastProvider}
+     * has to be initialized. Initialization will be handled by the
+     * {@link com.esentri.quartz.carbonaware.plugins.CarbonAwarePlugin} when the following quartz.properties
+     * are configured:
+     * <p>
+     *     <ol>
+     *         <li>org.quartz.plugin.carbon-aware-plugin.useOpenDataProvider=true</li>
+     *         <li>org.quartz.plugin.carbon-aware-plugin.openDataLocations=de</li>
+     *     </ol>
+     * </p>
+     *
+     */
+    public CarbonAwareCronScheduleBuilder useDefaultOpenDataForcastApiClient() {
+        this.carbonForecastApi = new OpenDataForecastClient();
         return this;
     }
 

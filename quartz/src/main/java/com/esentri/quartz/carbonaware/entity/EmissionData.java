@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * */
 public interface EmissionData extends Serializable {
 
-    LocalDateTime getTimestamp();
+    LocalDateTime timestamp();
 
-    Double getValue();
+    Double value();
 }

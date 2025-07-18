@@ -26,8 +26,8 @@ public class Functions {
         }
 
        return emissionForecasts.stream()
-                .filter(forecast -> location.equals(forecast.getLocation()))
-                .map(EmissionForecast::getOptimalDataPoints)
+                .filter(forecast -> location.equals(forecast.location()))
+                .map(EmissionForecast::optimalDataPoints)
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
                 .findFirst()
