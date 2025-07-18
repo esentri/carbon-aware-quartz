@@ -15,9 +15,9 @@ import java.util.List;
  * */
 public interface EmissionForecast extends Serializable {
 
-    String getLocation();
+    String location();
 
-    Integer getWindowSize();
+    Integer windowSize();
 
-    List<EmissionData> getOptimalDataPoints();
+    List<EmissionData> optimalDataPoints();
 }

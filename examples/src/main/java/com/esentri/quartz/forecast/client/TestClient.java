@@ -27,25 +27,25 @@ public class TestClient implements CarbonForecastApi {
     public List<EmissionForecast> getEmissionForecastCurrent(List<String> location, LocalDateTime dataStartAt, LocalDateTime dataEndAt, Integer windowSize) {
         return List.of(new EmissionForecast() {
             @Override
-            public String getLocation() {
+            public String location() {
                 return location.get(0);
             }
 
             @Override
-            public Integer getWindowSize() {
+            public Integer windowSize() {
                 return windowSize;
             }
 
             @Override
-            public List<EmissionData> getOptimalDataPoints() {
+            public List<EmissionData> optimalDataPoints() {
                 return List.of(new EmissionData() {
                     @Override
-                    public LocalDateTime getTimestamp() {
+                    public LocalDateTime timestamp() {
                         return LocalDateTime.now().plusSeconds(20);
                     }
 
                     @Override
-                    public Double getValue() {
+                    public Double value() {
                         return 22.7;
                     }
                 });

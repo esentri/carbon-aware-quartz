@@ -21,12 +21,12 @@ public class EmissionDataImpl implements EmissionData {
     private Double value;
 
     @Override
-    public LocalDateTime getTimestamp() {
+    public LocalDateTime timestamp() {
         return timestamp.toLocalDateTime();
     }
 
     @Override
-    public Double getValue() {
+    public Double value() {
         return value;
     }
 }

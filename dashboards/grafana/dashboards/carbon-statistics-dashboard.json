@@ -153,7 +153,7 @@
           "type": "math"
         }
       ],
-      "title": "Total saved Carton-Intensity %",
+      "title": "Total saved Carbon-Intensity %",
       "type": "gauge"
     },
     {
@@ -288,7 +288,7 @@
           "table": "carbon_statistics"
         }
       ],
-      "title": "Average Planed Carbon Intensity (gCO2/kWh)",
+      "title": "Average planed Carbon-Intensity (gCO2/kWh)",
       "type": "gauge"
     },
     {
@@ -422,7 +422,7 @@
           "type": "math"
         }
       ],
-      "title": "Total saved Carton-Intensity (gCO2/kWh)",
+      "title": "Total saved Carbon-Intensity (gCO2/kWh)",
       "type": "gauge"
     },
     {
@@ -552,7 +552,7 @@
           "table": "carbon_statistics"
         }
       ],
-      "title": "Average Used Carbon Intensity (gCO2/kWh)",
+      "title": "Average used Carbon-Intensity (gCO2/kWh)",
       "type": "gauge"
     },
     {
@@ -625,7 +625,7 @@
                 "type": "function"
               },
               {
-                "alias": "\"count\"",
+                "alias": "\"Count\"",
                 "name": "COUNT",
                 "parameters": [
                   {
@@ -723,7 +723,7 @@
                 "type": "function"
               },
               {
-                "alias": "\"time\"",
+                "alias": "\"Next Firetime\"",
                 "parameters": [
                   {
                     "name": "next_fire_time",

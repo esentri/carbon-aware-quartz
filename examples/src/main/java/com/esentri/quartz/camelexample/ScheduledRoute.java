@@ -1,17 +1,17 @@
 package com.esentri.quartz.camelexample;
 
-import static org.quartz.TriggerBuilder.newTrigger;
-
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleBuilder;
 import com.esentri.quartz.forecast.client.TestClient;
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.quartz.TriggerBuilder.newTrigger;
+
 public class ScheduledRoute extends RouteBuilder {
   private static final String ROUTE_ID = ScheduledRoute.class.getName();
 
   @Override
-  public void configure() throws Exception {
+  public void configure() {
 
     CarbonAwareCronTrigger carbonAwareTrigger = newTrigger()
         .withIdentity("quartzCarbonCamel", "carbon-aware")

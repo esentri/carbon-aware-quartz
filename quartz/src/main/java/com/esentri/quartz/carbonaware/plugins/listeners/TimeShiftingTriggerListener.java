@@ -25,7 +25,7 @@ public class TimeShiftingTriggerListener extends TriggerListenerSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeShiftingTriggerListener.class);
 
-    private boolean dryRun;
+    private final boolean dryRun;
 
     public TimeShiftingTriggerListener(boolean dryRun) {
         this.dryRun = dryRun;

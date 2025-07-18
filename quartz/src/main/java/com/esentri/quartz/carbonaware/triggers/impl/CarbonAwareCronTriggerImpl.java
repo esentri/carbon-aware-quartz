@@ -35,8 +35,8 @@ import java.io.Serial;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Calendar;
 import java.util.*;
+import java.util.Calendar;
 
 /**
  * <p>
@@ -98,7 +98,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
     }
 
     @Override
-    public Object clone() {
+    public Object clone() { //NOSONAR
         CarbonAwareCronTriggerImpl copy = (CarbonAwareCronTriggerImpl) super.clone();
         if (cronEx != null) {
             copy.setCronExpression(new CronExpression(cronEx));
@@ -324,13 +324,13 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
             }
 
             EmissionData emissionData = emissionForecasts.stream()
-                    .filter(forecast -> carbonForecastLocation.equals(forecast.getLocation()))
-                    .map(EmissionForecast::getOptimalDataPoints)
+                    .filter(forecast -> carbonForecastLocation.equals(forecast.location()))
+                    .map(EmissionForecast::optimalDataPoints)
                     .filter(Objects::nonNull)
                     .flatMap(Collection::stream)
                     .filter(Objects::nonNull)
-                    .filter(data -> data.getValue() != null)
-                    .min(Comparator.comparingDouble(EmissionData::getValue))
+                    .filter(data -> data.value() != null)
+                    .min(Comparator.comparingDouble(EmissionData::value))
                     .orElse(null);
 
             if(emissionData == null) {
@@ -343,7 +343,7 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
 
             // store the current forecast for statistics
             this.currentForecast = emissionData;
-            this.optimalExecutionTime = convertToDate(emissionData.getTimestamp(), timeZone);
+            this.optimalExecutionTime = convertToDate(emissionData.timestamp(), timeZone);
             this.carbonAwareExecutionState = CarbonAwareExecutionState.DETERMINED_BETTER_EXECUTION_TIME;
 
             LOGGER.info("--- {} determined better execution time at {} ---", getName(), optimalExecutionTime);
@@ -598,11 +598,11 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
         return cb;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    //--------------------------------------------------------------------------
     //
     // Computation Functions
     //
-    ////////////////////////////////////////////////////////////////////////////
+    //--------------------------------------------------------------------------
 
     protected Date getTimeAfter(Date afterTime) {
         return (cronEx == null) ? null : cronEx.getTimeAfter(afterTime);
@@ -616,11 +616,11 @@ public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronT
         return (cronEx == null) ? null : cronEx.getTimeBefore(eTime);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    //--------------------------------------------------------------------------
     //
     // Carbon Aware Functions
     //
-    ////////////////////////////////////////////////////////////////////////////
+    //--------------------------------------------------------------------------
 
     @Override
     public void setCarbonForecastApi(CarbonForecastApi carbonForecastApi) {
