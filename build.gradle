@@ -24,20 +24,6 @@ allprojects {
         tasks.withType(JavaCompile) {
             options.encoding = "UTF-8"
         }
-        javadoc {
-            title = '<h1>Carbon-Aware-Quartz</h1>'
-            options.bottom = '<i>provided by esentri.</i>'
-            options.encoding = 'UTF-8'
-            options.docEncoding = 'UTF-8'
-            options.charSet = 'UTF-8'
-            options.addBooleanOption 'html5', true
-            options.tags(
-                    'apiNote:a:API Note:',
-                    'implSpec:a:Implementation Requirements:',
-                    'implNote:a:Implementation Note:'
-            )
-
-        }
     }
 
     plugins.withId('maven-publish') {
