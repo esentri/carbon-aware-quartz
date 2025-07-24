@@ -5,8 +5,9 @@ plugins {
     id "org.owasp.dependencycheck" version "$owaspDependencycheckVersion"
 }
 
-repositories {
-    mavenCentral()
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -27,17 +28,4 @@ jar {
 
 test {
     useJUnitPlatform()
-}
-
-publishing {
-
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifactId = rootProject.name
-        }
-    }
-    repositories {
-        mavenLocal()
-    }
 }

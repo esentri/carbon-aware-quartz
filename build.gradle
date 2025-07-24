@@ -1,6 +1,119 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.jreleaser' version '1.13.1'
+}
+
 allprojects {
     group 'com.esentri.quartz'
     version "$version"
+
+    plugins.withType(JavaPlugin).configureEach {
+        repositories {
+            mavenCentral()
+        }
+        java {
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(17)
+            }
+        }
+        tasks.withType(Jar) {
+            includeEmptyDirs = false
+            enabled = true
+        }
+        tasks.withType(JavaCompile) {
+            options.encoding = "UTF-8"
+        }
+        javadoc {
+            title = '<h1>Carbon-Aware-Quartz</h1>'
+            options.bottom = '<i>provided by esentri.</i>'
+            options.encoding = 'UTF-8'
+            options.docEncoding = 'UTF-8'
+            options.charSet = 'UTF-8'
+            options.addBooleanOption 'html5', true
+            options.tags(
+                    'apiNote:a:API Note:',
+                    'implSpec:a:Implementation Requirements:',
+                    'implNote:a:Implementation Note:'
+            )
+
+        }
+    }
+
+    plugins.withId('maven-publish') {
+
+        afterEvaluate {
+            publishing {
+                publications {
+                    mavenJava(MavenPublication) {
+                        groupId = 'com.esentri.quartz'
+                        version = "$version"
+
+                        from components.java
+
+                        pom {
+                            name = 'Carbon-Aware-Quartz'
+                            description = 'Lorem Ipsum'
+
+                            licenses {
+                                license {
+                                    name = 'The Apache License, Version 2.0'
+                                    url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id = 'jannis-schalk'
+                                    name = 'Jannis Schalk'
+                                    email = 'jannis.schalk@esentri.com'
+                                    organization = 'esentri AG'
+                                    organizationUrl = 'https://www.esentri.com'
+                                }
+                            }
+                            scm {
+                                connection = 'scm:git@github.com:esentri/carbon-aware-quartz.git'
+                                url = 'https://github.com/esentri/carbon-aware-quartz/'
+                            }
+                        }
+                    }
+                }
+
+                repositories {
+                    maven {
+                        url = '../build/staging-deploy'
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ----------------------------------------------------------
+//  RELEASE TO MAVEN CENTRAL
+// ----------------------------------------------------------
+
+jreleaser {
+    project {
+        java.groupId = 'io'
+        version = "$version"
+        description = 'A Java framework for developing applications using Domain-Driven Design.'
+        copyright = 'The Apache License, Version 2.0'
+    }
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
 }
 
 subprojects {
