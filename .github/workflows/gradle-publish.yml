@@ -44,13 +44,8 @@ jobs:
         uses: andstor/file-reader-action@v1
         with:
           path: "CHANGELOG.md"
-      - name: Debug changelog content
-        run: |
-          echo "Changelog preview:"
-          echo "${{ steps.read_changelog.outputs.contents }}" | head -30
-          echo "Version substring is '${{ steps.version.outputs.substring }}'"
       - name: check_changelog
-        if: ${{ !contains(steps.read_changelog.outputs.contents, steps.version.outputs.substring) }}
+        if: ${{ !contains(variables['steps.read_changelog.outputs.contents'], variables['steps.version.outputs.substring']) }}
         run: |
           echo ${{ format('Changelog does not contain new version {0} ', steps.version.outputs.substring) }}
           exit 1
