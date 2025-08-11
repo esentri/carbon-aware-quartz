@@ -64,6 +64,7 @@ allprojects {
                         pom {
                             name = 'Carbon-Aware-Quartz'
                             description = 'Lorem Ipsum'
+                            url = "https://github.com/esentri/carbon-aware-quartz"
 
                             licenses {
                                 license {
