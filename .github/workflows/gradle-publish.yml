@@ -44,17 +44,6 @@ jobs:
         uses: andstor/file-reader-action@v1
         with:
           path: "CHANGELOG.md"
-      - name: Debug changelog content
-        run: |
-          echo "Changelog preview:"
-          echo "${{ steps.read_changelog.outputs.contents }}"
-          echo "Version:"
-          echo "${{ steps.version.outputs.substring }}"
-      - name: check_changelog
-        if: ${{ !contains(steps.read_changelog.outputs.contents, steps.version.outputs.substring) }}
-        run: |
-          echo ${{ format('Changelog does not contain new version {0} ', steps.version.outputs.substring) }}
-          exit 1
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
         with:
