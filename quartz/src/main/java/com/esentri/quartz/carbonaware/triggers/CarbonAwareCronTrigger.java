@@ -39,19 +39,14 @@ import java.util.TimeZone;
  * <a href="https://greensoftware.foundation/projects"><b>Green Software Foundation CarbonAware SDK</b></a>
  * <br>
  * <br>
- * <p>
  * For those unfamiliar with "cron", this means being able to create a firing
  * schedule such as: "At 8:00am every Monday through Friday".
- * </p>
  * <br>
  * <br>
- * <p>
- * The format of a "Cron-Expression" string is documented on the 
+ * The format of a "Cron-Expression" string is documented on the
  * {@link CronExpression} class.
- * </p>
- * 
- * <p>
- * Here are some full examples: </p>
+ *
+ * Here are some full examples:
  * <table>
  * <caption>Examples of cron expressions and their meanings.</caption>
  * <tr>
@@ -85,7 +80,8 @@ import java.util.TimeZone;
  * <td><code>Fire at 10:15am every day during the year 2005</code>
  * </td>
  * </tr>
- * 
+ * </table>
+ *
  * <p>
  * Pay attention to the effects of '?' and '*' in the day-of-week and
  * day-of-month fields!
@@ -103,20 +99,18 @@ import java.util.TimeZone;
  * time moves back or jumps forward.</li>
  * </ul>
  *
- * <p>
  * Custom implementation inspired by Quartz's {@link CronTrigger}.
  * This class introduces additional functionality while maintaining
  * compatibility with existing Quartz scheduling mechanisms.
  * <br>
  * Based on Quartz Scheduler (Copyright (c) Terracotta, Inc.)
  * Licensed under Apache License 2.0.
- * </p>
  *
  * @see com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleBuilder
  * @see TriggerBuilder
  *
  * @author Terracotta, Inc.
- * @author jannisschalk, esentri AG (modifications & extensions)
+ * @author jannisschalk, esentri AG (modifications and extensions)
  */
 public interface CarbonAwareCronTrigger extends Trigger {
 

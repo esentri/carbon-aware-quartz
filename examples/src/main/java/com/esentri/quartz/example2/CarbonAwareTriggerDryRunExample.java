@@ -21,6 +21,13 @@ public class CarbonAwareTriggerDryRunExample {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CarbonAwareTriggerDryRunExample.class);
 
+    /**
+     * The entry point of the application. Initiates and runs the example demonstrating
+     * the usage of a time-shifted job with CarbonAwareTrigger in dry-run mode.
+     *
+     * @param args command-line arguments
+     * @throws Exception if an unexpected error occurs during execution
+     */
     public static void main(String[] args) throws Exception {
         CarbonAwareTriggerDryRunExample example = new CarbonAwareTriggerDryRunExample();
         example.run();

@@ -21,6 +21,14 @@ public class CarbonAwareTriggerStatisticsExample {
     private static final Logger LOGGER = LoggerFactory.getLogger(CarbonAwareTriggerStatisticsExample.class);
     private static final String GROUP_NAME = "carbon-aware";
 
+    /**
+     * The main method serves as the entry point for the application. It creates an instance of
+     * {@code CarbonAwareTriggerStatisticsExample} and invokes the {@code run} method to execute
+     * the configured carbon-aware scheduling process.
+     *
+     * @param args the command-line arguments passed to the application
+     * @throws Exception if any exception occurs during the execution of the scheduling process
+     */
     public static void main(String[] args) throws Exception {
         CarbonAwareTriggerStatisticsExample example = new CarbonAwareTriggerStatisticsExample();
         example.run();

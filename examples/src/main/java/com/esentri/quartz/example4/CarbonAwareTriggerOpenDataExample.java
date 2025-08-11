@@ -25,6 +25,13 @@ public class CarbonAwareTriggerOpenDataExample {
     private static final Logger LOGGER = LoggerFactory.getLogger(CarbonAwareTriggerOpenDataExample.class);
     private static final String GROUP_NAME = "carbon-aware";
 
+    /**
+     * The main method serves as the entry point for the application. It initializes
+     * the necessary components and executes the example process.
+     *
+     * @param args command-line arguments passed to the application
+     * @throws Exception if an error occurs during initialization or execution
+     */
     public static void main(String[] args) throws Exception {
         EnergyChartsForecastProvider.initialize(List.of("de"));
 

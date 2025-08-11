@@ -13,11 +13,53 @@ import org.slf4j.LoggerFactory;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+/**
+ * This class serves as an example implementation for scheduling a job using
+ * a CarbonAwareCronTrigger in conjunction with Quartz Scheduler. It highlights
+ * the usage of eco-friendly scheduling by leveraging carbon awareness
+ * data to determine when to optimally execute a job with minimal carbon
+ * emissions.
+ *
+ * This implementation schedules a sample job (TimeShiftedJob) and utilizes
+ * a CarbonAwareCronTrigger to decide the best time to execute the job,
+ * factoring in carbon emissions forecasts.
+ *
+ * The example employs the following components:
+ * - A job: TimeShiftedJob, defining the task to be executed.
+ * - A trigger: CarbonAwareCronTrigger, which uses scheduling criteria based
+ *   on carbon-aware forecasts.
+ * - A schedule builder: CarbonAwareCronScheduleBuilder to configure the trigger
+ *   with a cron expression, job duration, location, and carbon forecast API.
+ * - Quartz Scheduler: Used for scheduling and managing job execution.
+ *
+ * The CarbonAwareCronTrigger implements eco-conscious scheduling by minimizing
+ * the carbon footprint of tasks. This is achieved by analyzing forecasts and
+ * favorably scheduling jobs during lower carbon output periods in the power
+ * grid of the specified location.
+ *
+ * The {@code runScheduler} method demonstrates the lifecycle of a Quartz
+ * scheduler, including starting, running for a specified duration, and
+ * shutdown.
+ *
+ * Logging is used to provide information about scheduler actions and
+ * job execution, enabling easier debugging and monitoring.
+ *
+ * Exceptions such as {@link SchedulerException} and {@link InterruptedException}
+ * are handled to ensure proper error management during scheduling and execution.
+ */
 public class CarbonAwareTriggerExample {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CarbonAwareTriggerExample.class);
     private static final String GROUP_NAME = "carbon-aware";
 
+    /**
+     * The entry point of the application which demonstrates the execution
+     * of a Carbon-Aware time-shifted job using Quartz scheduler.
+     * This method initializes and executes the example.
+     *
+     * @param args Command-line arguments passed to the application.
+     * @throws Exception If an error occurs during job scheduling or execution.
+     */
     public static void main(String[] args) throws Exception {
         CarbonAwareTriggerExample example = new CarbonAwareTriggerExample();
         example.run();

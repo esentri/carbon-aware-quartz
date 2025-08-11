@@ -54,7 +54,7 @@ import java.util.Calendar;
  * </p>
  *
  * @author Terracotta, Inc.
- * @author jannisschalk, esentri AG (modifications & extensions)
+ * @author jannisschalk, esentri AG (modifications and extensions)
  */
 public class CarbonAwareCronTriggerImpl extends AbstractTrigger<CarbonAwareCronTrigger> implements CarbonAwareCronTrigger, CoreTrigger {
 

@@ -76,7 +76,7 @@ import java.util.TimeZone;
  * @see TriggerBuilder
  *
  * @author Terracotta, Inc.
- * @author jannisschalk, esentri AG (modifications & extensions)
+ * @author jannisschalk, esentri AG (modifications and extensions)
  */
 public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareCronTrigger> {
 
@@ -132,12 +132,10 @@ public class CarbonAwareCronScheduleBuilder extends ScheduleBuilder<CarbonAwareC
      * has to be initialized. Initialization will be handled by the
      * {@link com.esentri.quartz.carbonaware.plugins.CarbonAwarePlugin} when the following quartz.properties
      * are configured:
-     * <p>
-     *     <ol>
-     *         <li>org.quartz.plugin.carbon-aware-plugin.useOpenDataProvider=true</li>
-     *         <li>org.quartz.plugin.carbon-aware-plugin.openDataLocations=de</li>
-     *     </ol>
-     * </p>
+     * <ol>
+     *      <li>org.quartz.plugin.carbon-aware-plugin.useOpenDataProvider=true</li>
+     *      <li>org.quartz.plugin.carbon-aware-plugin.openDataLocations=de</li>
+     * </ol>
      *
      */
     public CarbonAwareCronScheduleBuilder useDefaultOpenDataForcastApiClient() {
