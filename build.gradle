@@ -4,9 +4,18 @@ plugins {
     id 'org.jreleaser' version '1.13.1'
 }
 
+def versionProps = new Properties()
+file("version.properties").withInputStream { versionProps.load(it) }
+
+tasks.register('printVersion') {
+    doFirst {
+        println('Carbon-Aware-Quartz Version: ' + versionProps.getProperty("version"))
+    }
+}
+
 allprojects {
     group 'com.esentri.quartz'
-    version "$version"
+    version versionProps.getProperty("version")
 
     plugins.withType(JavaPlugin).configureEach {
         repositories {
@@ -32,8 +41,8 @@ allprojects {
             publishing {
                 publications {
                     mavenJava(MavenPublication) {
-                        groupId = 'com.esentri.quartz'
-                        version = "$version"
+                        groupId = 'com.esentri'
+                        version = versionProps.getProperty("version")
 
                         from components.java
 
@@ -80,8 +89,8 @@ allprojects {
 
 jreleaser {
     project {
-        java.groupId = 'io'
-        version = "$version"
+        java.groupId = 'com'
+        version = versionProps.getProperty("version")
         description = 'A Java framework for developing applications using Domain-Driven Design.'
         copyright = 'The Apache License, Version 2.0'
     }
@@ -106,4 +115,9 @@ subprojects {
     repositories {
         mavenCentral()
     }
+}
+
+wrapper {
+    gradleVersion = '8.11'
+    distributionType = 'ALL'
 }
