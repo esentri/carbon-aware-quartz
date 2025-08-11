@@ -105,10 +105,10 @@ allprojects {
 
 jreleaser {
     project {
-        java.groupId = 'com'
+        java.groupId = 'com.esentri'
         version = versionProps.getProperty("version")
-        description = 'A Java framework for developing applications using Domain-Driven Design.'
-        copyright = 'The Apache License, Version 2.0'
+        description = 'Lorem Ipsum'
+        copyright = 'Carbon-Aware Quartz Scheduler - A framework for carbon-aware job scheduling'
     }
     signing {
         active = 'ALWAYS'
