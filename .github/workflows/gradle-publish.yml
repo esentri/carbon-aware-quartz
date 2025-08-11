@@ -34,7 +34,7 @@ jobs:
       - id: read_version
         uses: andstor/file-reader-action@v1
         with:
-          path: "gradle.properties"
+          path: "version.properties"
       - uses: bhowell2/github-substring-action@1.0.2
         id: version
         with:
