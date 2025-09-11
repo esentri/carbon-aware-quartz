@@ -14,7 +14,7 @@ tasks.register('printVersion') {
 }
 
 allprojects {
-    group 'com.esentri.quartz'
+    group 'com.esentri'
     version versionProps.getProperty("version")
 
     plugins.withType(JavaPlugin).configureEach {
@@ -63,7 +63,11 @@ allprojects {
 
                         pom {
                             name = 'Carbon-Aware-Quartz'
-                            description = 'Lorem Ipsum'
+                            description = 'Carbon-Aware Quartz is an extension to the Quartz Scheduler that enables ' +
+                                    'carbon-aware job scheduling. It can time-shift executions to periods of lower ' +
+                                    'grid carbon intensity and optionally record statistics on saved emissions. ' +
+                                    'Client integrations (forecast and persistence) are discovered via Java ' +
+                                    'ServiceLoader (SPI) and work on standard JVMs'
                             url = "https://github.com/esentri/carbon-aware-quartz"
 
                             licenses {
@@ -107,7 +111,10 @@ jreleaser {
     project {
         java.groupId = 'com.esentri'
         version = versionProps.getProperty("version")
-        description = 'Lorem Ipsum'
+        description = 'This Project is an extension for the Quartz-Scheduler. ' +
+                'All funcctions of Quartz still supported, but enhanced with a ' +
+                'Time-Shifting functionality to reschedule a Job to a Time, where the Grid-Carbon-Intensity' +
+                ' is at a minimum.'
         copyright = 'Carbon-Aware Quartz Scheduler - A framework for carbon-aware job scheduling'
     }
     signing {
