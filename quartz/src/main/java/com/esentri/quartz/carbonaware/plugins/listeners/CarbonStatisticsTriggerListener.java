@@ -18,9 +18,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.listeners.TriggerListenerSupport;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.TimeZone;
 
 
@@ -41,25 +41,38 @@ public class CarbonStatisticsTriggerListener extends TriggerListenerSupport {
             String restClientImplementationClass,
             Boolean dryRun) {
 
-        persistenceClient = tryToInstantiate(persistenceClientImplementationClass);
-        restClient = tryToInstantiate(restClientImplementationClass);
+        this.persistenceClient = loadProvider(
+                com.esentri.quartz.carbonaware.clients.persistence.PersistenceApi.class,
+                persistenceClientImplementationClass);
+        this.restClient = loadProvider(
+                com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi.class,
+                restClientImplementationClass);
         this.dryRun = dryRun;
 
     }
 
-    private static <T> T tryToInstantiate(String implementationClassName) {
-        try {
-            Class<?> implementationClass = Class.forName(implementationClassName);
-            return (T) implementationClass.getDeclaredConstructor().newInstance();
-
-        } catch (NoSuchMethodException
-                 | InstantiationException
-                 | IllegalAccessException
-                 | InvocationTargetException e) {
-            throw new IllegalStateException("Cannot create instance of class for name: %s".formatted(implementationClassName), e);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot find class for name: %s".formatted(implementationClassName), e);
+    private static <T> T loadProvider(Class<T> apiType, String nameOrFqcn) {
+        // Discover implementations via Java SPI (ServiceLoader) only — no reflection instantiation.
+        for (T impl : ServiceLoader.load(apiType, Thread.currentThread().getContextClassLoader())) {
+            Class<?> c = impl.getClass();
+            if (c.getName().equals(nameOrFqcn) || c.getSimpleName().equals(nameOrFqcn)) {
+                return impl;
+            }
         }
+        // If not found by an exact / simple name, but only one provider exists, return it to keep the default behavior.
+        T single = null;
+        int count = 0;
+        for (T impl : ServiceLoader.load(apiType, Thread.currentThread().getContextClassLoader())) {
+            single = impl;
+            count++;
+            if (count > 1) break;
+        }
+        if (count == 1 && (nameOrFqcn == null || nameOrFqcn.isBlank())) {
+            return single;
+        }
+        throw new IllegalStateException(
+                "No SPI provider for %s matching '%s'. Ensure an implementation is registered under META-INF/services/%s"
+                        .formatted(apiType.getName(), nameOrFqcn, apiType.getName()));
     }
 
     @Override

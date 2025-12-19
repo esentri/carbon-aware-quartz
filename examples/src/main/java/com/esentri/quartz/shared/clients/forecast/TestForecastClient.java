@@ -1,4 +1,4 @@
-package com.esentri.quartz.forecast.client;
+package com.esentri.quartz.shared.clients.forecast;
 
 
 
@@ -16,10 +16,10 @@ import java.util.List;
  *
  * @author jannisschalk
  * */
-public class TestClient implements CarbonForecastApi {
+public class TestForecastClient implements CarbonForecastApi {
 
 
-    public TestClient() {
+    public TestForecastClient() {
         // intentionally left blank
     }
 

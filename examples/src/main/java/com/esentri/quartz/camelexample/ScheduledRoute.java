@@ -2,7 +2,7 @@ package com.esentri.quartz.camelexample;
 
 import com.esentri.quartz.carbonaware.triggers.CarbonAwareCronTrigger;
 import com.esentri.quartz.carbonaware.triggers.builders.CarbonAwareCronScheduleBuilder;
-import com.esentri.quartz.forecast.client.TestClient;
+import com.esentri.quartz.shared.clients.forecast.TestForecastClient;
 import org.apache.camel.builder.RouteBuilder;
 
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -20,7 +20,7 @@ public class ScheduledRoute extends RouteBuilder {
             .withJobDurationInMinutes(7)
             .withDeadlineCronExpression("50 0/1 * ? * *")
             .withLocation("de")
-            .withCarbonForecastApi(new TestClient()))
+            .withCarbonForecastApi(new TestForecastClient()))
         .build();
 
 

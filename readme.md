@@ -51,7 +51,7 @@ Also, an implementation of Slf4J is required on the projects classpath.
 dependencies {
     implementation "org.quartz-scheduler:quartz:2.5.X"
     implementation "org.slf4j:slf4j-api:2.X.X"
-    implementation 'com.esentri.quartz:carbon-aware-quartz:1.1.0'
+    implementation 'com.esentri:quartz:1.1.0'
 }
 ```
 
@@ -144,6 +144,37 @@ The `restClientImplementationClass` can be the same implementation of `CarbonFor
 Trigger.
 This is required to fetch the Carbon Intensity for the initial timestamp and the re-scheduled timestamp.
 To store this information, a `persistenceClientImplementationClass` is required, which implements the `PersistenceApi.class` interface.
+
+##### SPI-based client discovery (ServiceLoader)
+
+From version 1.1.0, Carbon-Aware Quartz no longer uses reflection (Class.forName/newInstance) to construct client implementations. Instead, it relies entirely on the Java Service Provider Interface (SPI) via ServiceLoader. This works well in standard JVMs and in Quarkus (including native-image) when providers are properly registered.
+
+- What is discovered via SPI?
+  - com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi
+  - com.esentri.quartz.carbonaware.clients.persistence.PersistenceApi
+
+- How to register your implementation
+  1) Implement one of the interfaces above.
+  2) Add a file under META-INF/services with the fully qualified name of the interface.
+  3) Put the fully qualified name(s) of your implementation class(es) as lines in that file.
+
+  Example for a custom CarbonForecastApi implementation:
+  - File: META-INF/services/com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi
+    Content:
+    com.example.quartz.clients.rest.MyForecastClient
+
+  Example for a custom PersistenceApi implementation:
+  - File: META-INF/services/com.esentri.quartz.carbonaware.clients.persistence.PersistenceApi
+    Content:
+    com.example.quartz.clients.persistence.MyPersistenceClient
+
+- Selecting a specific provider via properties (optional)
+  - org.quartz.plugin.<NAME>.restClientImplementationClass: Either the fully qualified name or the simple class name of one of the registered CarbonForecastApi providers.
+  - org.quartz.plugin.<NAME>.persistenceClientImplementationClass: Either the fully qualified name or the simple class name of one of the registered PersistenceApi providers.
+  - If these properties are omitted and exactly one provider for an API is present on the classpath, that single provider is selected automatically.
+
+- Quarkus/native-image note
+  - Ensure your META-INF/services resources are included in the final application (and the native image if you build one). In Quarkus, providers discovered via ServiceLoader are supported; just make sure the provider classes and META-INF/services files are part of your application or its dependencies.
 
 #### Examples
 

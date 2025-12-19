@@ -1,4 +1,4 @@
-package com.esentri.quartz.example3.persistence;
+package com.esentri.quartz.shared.clients.persistence;
 
 import com.esentri.quartz.carbonaware.clients.persistence.PersistenceApi;
 import com.esentri.quartz.carbonaware.entity.CarbonStatisticDto;

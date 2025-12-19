@@ -1,0 +1,2 @@
+com.esentri.quartz.shared.clients.persistence.TestPersistenceClient
+com.esentri.quartz.springboot.clients.jdbc.CarbonStatisticsClient

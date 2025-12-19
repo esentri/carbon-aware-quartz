@@ -40,8 +40,6 @@ class CarbonStatisticsTriggerListenerTest {
                     .toInstant(ZoneOffset.UTC),
             ZoneId.systemDefault());
     @Mock
-    private Scheduler scheduler;
-    @Mock
     private JobExecutionContext context;
     @Mock
     private CarbonAwareCronTrigger trigger;
@@ -99,7 +97,7 @@ class CarbonStatisticsTriggerListenerTest {
         sut.triggerFired(trigger, context);
 
         PersistenceClient persistenceClient = (PersistenceClient) sut.getPersistenceClient();
-        assertThat(persistenceClient.persistedObjects).hasSize(0);
+        assertThat(persistenceClient.persistedObjects).isEmpty();
     }
 
     @Test
@@ -109,7 +107,7 @@ class CarbonStatisticsTriggerListenerTest {
         sut.triggerFired(new CronTriggerImpl(), context);
 
         PersistenceClient persistenceClient = (PersistenceClient) sut.getPersistenceClient();
-        assertThat(persistenceClient.persistedObjects).hasSize(0);
+        assertThat(persistenceClient.persistedObjects).isEmpty();
     }
 
     @Test
