@@ -22,3 +22,4 @@
 - [ ] Provide comprehensive unit tests for auto-configuration and property mapping.
 - [ ] Include an `AGENTS.md` file within the extension module explaining its usage.
 - [ ] Ensure the extension does not conflict with existing Quartz `SchedulerCustomizer` beans.
+- [ ] Project compile successfully
