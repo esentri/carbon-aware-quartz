@@ -1,18 +1,30 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 group = 'com.esentri'
 version = '1.2.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    api project(':quartz')
+    
+    implementation "org.springframework.boot:spring-boot-starter-quartz:3.4.1"
+    implementation "org.springframework.boot:spring-boot-autoconfigure:3.4.1"
+    
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:3.4.1"
+    
+    testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.1"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
 }
 
 test {
