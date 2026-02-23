@@ -3,10 +3,9 @@ package com.esentri.quartz.springboot.clients.rest;
 import com.esentri.quartz.carbonaware.clients.rest.CarbonForecastApi;
 import com.esentri.quartz.carbonaware.entity.EmissionForecast;
 import com.esentri.quartz.springboot.clients.rest.entity.EmissionForecastImpl;
-import com.esentri.quartz.springboot.configuration.ApplicationContextProvider;
 import com.esentri.quartz.springboot.configuration.RestTemplateConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.DependsOn;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,8 +18,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@DependsOn("applicationContextProvider")
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class CarbonForecastClient implements CarbonForecastApi {
 
     @Serial
@@ -31,17 +31,15 @@ public class CarbonForecastClient implements CarbonForecastApi {
 
     private final RestTemplateConfiguration.SerializableRestTemplate restTemplate;
 
-    public CarbonForecastClient() {
-        ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-        this.restTemplate = applicationContext.getBean(RestTemplateConfiguration.SerializableRestTemplate.class);
-    }
-
     @Override
     public List<EmissionForecast> getEmissionForecastCurrent(
             List<String> location,
             LocalDateTime startTime,
             LocalDateTime endTime,
             Integer jobDuration) {
+
+        log.info("Fetching emission forecast for location {} from {} to {} with duration {}", location, startTime, endTime, jobDuration);
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("x-api-key", API_KEY);
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
@@ -59,6 +57,7 @@ public class CarbonForecastClient implements CarbonForecastApi {
                 .queryParam("windowSize", "{windowSize}")
                 .encode()
                 .toUriString();
+        log.debug("Forecast URI-Template {}", urlTemplate);
         ResponseEntity<EmissionForecastResponse> result = restTemplate.exchange(urlTemplate, HttpMethod.GET, requestEntity, EmissionForecastResponse.class, params);
 
         return new ArrayList<>(Objects.requireNonNull(result.getBody()));

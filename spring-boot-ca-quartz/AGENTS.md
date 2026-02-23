@@ -90,10 +90,10 @@ This module follows a Spec-Driven Development approach. Every feature is first d
 - **Verification**: Tests are designed based on the specifications to ensure full compliance.
 
 **SDD Artifacts:**
-- **[Acceptance Criteria](docs/acceptence-criteria.md)**: High-level functional and technical requirements.
-- **[Architecture Design](docs/architecture.md)**: High-level overview of component interaction and bridging logic.
-- **[Technical Specifications](docs/specs.md)**: Detailed design, sub-feature definitions, and Glossary.
-- **[Test Specification](docs/test-specification.md)**: Detailed mapping of requirements to test cases.
+- **[Acceptance Criteria](sdd/acceptence-criteria.md)**: High-level functional and technical requirements.
+- **[Architecture Design](sdd/architecture.md)**: High-level overview of component interaction and bridging logic.
+- **[Technical Specifications](sdd/specs.md)**: Detailed design, sub-feature definitions, and Glossary.
+- **[Test Specification](sdd/test-specification.md)**: Detailed mapping of requirements to test cases.
 
 ### Javadoc
 

@@ -25,7 +25,7 @@ public class TriggerConfiguration {
 
     @Bean
     @ConditionalOnProperty(
-            name = "spring.quartz.properties.org.quartz.plugin.carbon-aware-plugin.useOpenDataProvider",
+            name = "carbon.aware.scheduling.open-data.enabled",
             havingValue = "true")
     public JobDetail firstJob() {
         return JobBuilder.newJob().ofType(SimpleLoggingJob.class)
@@ -37,7 +37,7 @@ public class TriggerConfiguration {
 
     @Bean
     @ConditionalOnProperty(
-            name = "spring.quartz.properties.org.quartz.plugin.carbon-aware-plugin.useOpenDataProvider",
+            name = "carbon.aware.scheduling.open-data.enabled",
             havingValue = "true")
     public Trigger triggerUsingDefaultOpenDataForecastClient(@Qualifier("firstJob") JobDetail job) {
 
@@ -56,7 +56,7 @@ public class TriggerConfiguration {
 
     @Bean
     @ConditionalOnProperty(
-            name = "spring.quartz.properties.org.quartz.plugin.carbon-aware-plugin.useOpenDataProvider",
+            name = "carbon.aware.scheduling.open-data.enabled",
             havingValue = "false")
     public JobDetail secondJob() {
         return JobBuilder.newJob().ofType(AnotherLoggingJob.class)
@@ -68,7 +68,7 @@ public class TriggerConfiguration {
 
     @Bean
     @ConditionalOnProperty(
-            name = "spring.quartz.properties.org.quartz.plugin.carbon-aware-plugin.useOpenDataProvider",
+            name = "carbon.aware.scheduling.open-data.enabled",
             havingValue = "false")
     public Trigger triggerUsingCustomImplementedForecastRestClient(@Qualifier("secondJob") JobDetail job) {
 

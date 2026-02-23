@@ -2,9 +2,6 @@ plugins {
     id 'java-library'
 }
 
-group = 'com.esentri'
-version = '1.2.0'
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
