@@ -40,7 +40,7 @@ Add the annotation to your main application class:
 @SpringBootApplication
 @EnableCarbonAwareScheduling
 public class MyApplication {
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(MyApplication.class, args);
     }
 }
@@ -248,16 +248,16 @@ The starter uses intelligent bean resolution with the following precedence:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ Spring Boot Application                                      │
-│                                                              │
-│  @SpringBootApplication                                      │
+│ Spring Boot Application                                     │
+│                                                             │
+│  @SpringBootApplication                                     │
 │  @EnableCarbonAwareScheduling  ◄─── Activation Trigger      │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ CarbonAwareSchedulingAutoConfiguration                       │
-│                                                              │
+│ CarbonAwareSchedulingAutoConfiguration                      │
+│                                                             │
 │  • Loads CarbonAwareProperties                              │
 │  • Creates ApiProviderResolver                              │
 │  • Registers CarbonAwareSchedulerCustomizer                 │
@@ -266,7 +266,7 @@ The starter uses intelligent bean resolution with the following precedence:
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Quartz Scheduler (via SchedulerFactoryBeanCustomizer)       │
-│                                                              │
+│                                                             │
 │  • CarbonAwarePlugin registered                             │
 │  • TimeShiftingTriggerListener attached                     │
 │  • CarbonStatisticsTriggerListener (conditional)            │
@@ -494,192 +494,29 @@ public class MyProvider implements CarbonForecastApi {
 }
 ```
 
-## Development Approach: AI-Powered Spec-Driven Development
+## Development Approach
 
-This module was developed using an **AI-assisted Spec-Driven Development (SDD)** methodology, ensuring high quality, consistency, and traceability from requirements to implementation.
+This module was developed using **AI-assisted Spec-Driven Development (SDD)**, where specifications are written first and AI generates implementation following those specs with human oversight.
 
-### What is Spec-Driven Development?
+**Key Benefits:**
+- ✅ Complete traceability from requirements to implementation
+- ✅ Comprehensive testing and documentation from day one
+- ✅ Consistent quality across all features
+- ✅ Accelerated development without sacrificing maintainability
 
-Spec-Driven Development is a rigorous development approach where **specifications are written first**, before any code is created. Every feature, component, and behavior is thoroughly documented in technical specifications that serve as the single source of truth for implementation.
+**For complete details on the SDD methodology, extending this module, and the AI-assisted workflow, see:**
 
-### AI-Assisted Development Workflow
+📖 **[SDD Documentation](sdd/README.md)** - Complete guide to Spec-Driven Development with AI
 
-This project demonstrates how AI can accelerate and enhance the SDD process while maintaining human oversight and architectural decisions. The development workflow follows these steps:
-
-#### 1. **Create/Adjust Feature Specification**
-   - Location: [`sdd/specs/`](sdd/specs/)
-   - Write detailed technical specifications for new features
-   - Specifications include:
-     - Feature description and rationale
-     - Technical requirements
-     - API definitions
-     - Configuration options
-     - Integration points
-     - Edge cases and constraints
-
-   **Example**: [`sdd/specs/01_activation.md`](sdd/specs/01_activation.md) - Defines annotation-based activation
-
-#### 2. **Update Acceptance Criteria**
-   - Location: [`sdd/acceptence-criteria.md`](sdd/acceptence-criteria.md)
-   - Define functional and technical acceptance criteria
-   - Specify verification methods
-   - Ensure all requirements are testable
-
-   **Human Role**: Review and approve acceptance criteria to ensure business requirements are met
-
-#### 3. **Adjust Architecture Documentation**
-   - Location: [`sdd/architecture.md`](sdd/architecture.md)
-   - Update architecture diagrams and component descriptions
-   - Document data flows and integration patterns
-   - Define component lifecycle and interactions
-
-   **AI Role**: Generate or update architecture documentation based on specs
-   **Human Role**: Review architectural decisions for soundness and maintainability
-
-#### 4. **Generate Task Board**
-   - Location: [`sdd/task-board_1.2.0.md`](sdd/task-board_1.2.0.md)
-   - AI combines architecture, acceptance criteria, and specs
-   - Creates ordered, actionable implementation tasks
-   - Includes verification checkpoints
-   - Breaks complex features into manageable steps
-
-   **AI Role**: Generate comprehensive task breakdown
-   **Human Role**: Validate task ordering and dependencies
-
-#### 5. **AI-Driven Code Generation**
-   - AI implements features following the task board
-   - Each task includes verification steps
-   - Code is generated with:
-     - Complete Javadoc documentation
-     - Comprehensive error handling
-     - Unit and integration tests
-     - Configuration metadata
-
-   **AI Role**: Generate implementation code, tests, and documentation
-   **Human Role**: Review code quality, test coverage, and edge cases
-
-#### 6. **Update CHANGELOG and README**
-   - AI updates documentation to reflect new features
-   - Maintains version history
-   - Adds usage examples
-   - Updates configuration reference
-
-   **AI Role**: Generate documentation updates
-   **Human Role**: Ensure user-facing documentation is clear and complete
-
-### Benefits of AI-Powered SDD
-
-✅ **Consistency**: Every feature follows the same rigorous process
-✅ **Traceability**: Clear path from requirement → spec → implementation → test
-✅ **Quality**: Comprehensive testing and documentation from day one
-✅ **Speed**: AI accelerates implementation while maintaining quality
-✅ **Maintainability**: Well-documented code with clear architectural decisions
-✅ **Testability**: Tests are derived directly from acceptance criteria
-
-### Development Artifacts
-
-All SDD artifacts are version-controlled in the [`sdd/`](sdd/) directory:
-
-```
-spring-boot-ca-quartz/sdd/
-├── acceptence-criteria.md          # Functional & technical requirements
-├── architecture.md                 # System design and component interaction
-├── specs.md                        # Glossary and cross-cutting concerns
-├── specs/                          # Feature-specific technical specs
-│   ├── 01_activation.md
-│   ├── 02_configuration.md
-│   ├── 03_quartz_integration.md
-│   ├── 04_dependency_management.md
-│   └── 05_forecast_providers.md
-├── task-board_1.2.0.md            # Implementation task breakdown
-└── test-specification.md           # Test cases and verification strategy
-```
-
-### Extending This Module
-
-To add new features to this module, follow the SDD workflow:
-
-1. **Write the Spec**: Create a new spec file in `sdd/specs/` (e.g., `06_my_feature.md`)
-   - Define the feature's purpose and requirements
-   - Specify configuration options
-   - Document integration points
-   - List edge cases
-
-2. **Update Acceptance Criteria**: Add entries to `sdd/acceptence-criteria.md`
-   - Define what "done" means for this feature
-   - Specify verification methods
-
-3. **Update Architecture**: Modify `sdd/architecture.md` if needed
-   - Add new components to the architecture diagram
-   - Document new data flows
-   - Update component lifecycle if changed
-
-4. **Generate Task Board**: Ask AI to generate an implementation task board
-   ```
-   "Generate a task board for implementing feature X based on spec 06_my_feature.md,
-   considering the existing architecture and acceptance criteria"
-   ```
-
-5. **Implement with AI**: Use the task board to guide AI-assisted implementation
-   ```
-   "Implement task 1 from the task board: Create MyNewComponent following the spec"
-   ```
-
-6. **Update Documentation**: Have AI update CHANGELOG.md and README.md
-   ```
-   "Update CHANGELOG.md and README.md to document the new feature X"
-   ```
-
-### Example: Adding a New Feature
-
-**Scenario**: Add support for custom time-shifting strategies
-
-**Step 1** - Create `sdd/specs/06_custom_strategies.md`:
-```markdown
-# Custom Time-Shifting Strategies
-
-## Overview
-Allow users to implement custom strategies for determining optimal execution times...
-
-## Configuration
-- `carbon.aware.scheduling.strategy.class` - Fully-qualified class name
-...
-```
-
-**Step 2** - Update `sdd/acceptence-criteria.md`:
-```markdown
-- [ ] Support custom time-shifting strategy implementations
-- [ ] Provide a `TimeShiftingStrategy` interface
-...
-```
-
-**Step 3** - Review and adjust `sdd/architecture.md` (with AI assistance)
-
-**Step 4** - Generate task board (AI generates based on all SDD artifacts)
-
-**Step 5** - Implement feature (AI follows task board)
-
-**Step 6** - Update CHANGELOG.md and README.md (AI documents the feature)
-
-### Why This Approach Works
-
-🎯 **Clarity**: Specifications prevent ambiguity and miscommunication
-🤖 **AI Efficiency**: AI excels at implementing well-defined specifications
-👤 **Human Oversight**: Humans focus on architectural decisions and business logic
-📋 **Documentation**: Documentation is never out of date - it drives development
-✅ **Quality**: Every feature is designed, implemented, tested, and documented consistently
-
-This development methodology demonstrates how AI can be effectively integrated into professional software development workflows while maintaining high standards of quality, maintainability, and traceability.
+All development artifacts (specifications, architecture, task boards) are in the [`sdd/`](./sdd) directory.
 
 ## Contributing
 
-See the main project [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
-
-When contributing new features, please follow the Spec-Driven Development workflow described above to ensure consistency and quality.
+**When contributing new features, please follow the Spec-Driven Development workflow documented in [`sdd/README.md`](sdd/README.md) to ensure consistency and quality.**
 
 ## License
 
-See [LICENSE](../LICENSE) file for details.
+See the [LICENSE](../LICENSE) file for details.
 
 ## Support
 

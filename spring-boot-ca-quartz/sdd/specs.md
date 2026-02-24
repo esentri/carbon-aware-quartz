@@ -5,7 +5,7 @@ This directory contains the detailed technical specifications and architectural 
 ## 1. Core Documents
 
 - **[Architecture Design Document](architecture.md)**: High-level overview of component interaction and bridging logic.
-- **[Test Specification](test-specification.md)**: Detailed mapping of requirements to test cases.
+- **[Test Specification](./specs/test-specification.md)**: Detailed mapping of requirements to test cases.
 - **[Acceptance Criteria](acceptence-criteria.md)**: High-level functional and technical requirements.
 
 ## 2. Feature Specifications
@@ -52,7 +52,7 @@ This directory contains the detailed technical specifications and architectural 
 ## 4. Definition of Done (DoD)
 
 A feature is considered "Done" when:
-1.  All related [Test Specification](test-specification.md) cases pass.
+1.  All related [Test Specification](./specs/test-specification.md) cases pass.
 2.  Build is green (production and test code).
 3.  All public API elements have Javadoc with the `god-mode enabled` prefix.
 4.  The feature is guarded by `carbon.aware.scheduling.enabled` and appropriate sub-toggles.
@@ -67,7 +67,7 @@ A feature is considered "Done" when:
 
 ### Test Strategy Overview
 The module uses a mix of Unit Tests for logic and Integration Tests with the full Spring ApplicationContext to verify auto-configuration.
-To avoid duplication, the single source of truth for detailed test cases is the [Test Specification](test-specification.md); feature specs reference test IDs (e.g., UT-1, IT-4) rather than restating steps.
+To avoid duplication, the single source of truth for detailed test cases is the [Test Specification](./specs/test-specification.md); feature specs reference test IDs (e.g., UT-1, IT-4) rather than restating steps.
 
 ## 6. Glossary
 
