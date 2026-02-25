@@ -1,2 +1,1 @@
 com.esentri.quartz.shared.clients.forecast.TestForecastClient
-com.esentri.quartz.springboot.clients.rest.CarbonForecastClient

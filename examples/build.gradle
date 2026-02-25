@@ -27,9 +27,9 @@ dependencies {
         exclude group: 'com.mchange', module: 'c3p0'
     }
 
-    //SpringBoot example
+    //SpringBoot example - uses the new spring-boot-ca-quartz starter
+    implementation project(':spring-boot-ca-quartz')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-quartz'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'
